@@ -1,0 +1,33 @@
+.app {
+    margin: 50px;
+}
+
+.playerList {
+    text-align: center;
+    height: 100%;
+    width: 50%;
+    float: left;
+}
+
+.accountList {
+    text-align: center;
+    height: 100%;
+    width: 50%;
+    float: left;
+}
+
+.search {
+    padding: 0px;
+    font-size: 15px;
+}
+
+.list {
+    padding: 0;
+    list-style: none;
+    text-align: center;
+}
+
+.listItem {
+    margin-bottom: 20px;
+    font-size: 15px;
+}
