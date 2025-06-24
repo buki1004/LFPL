@@ -6,7 +6,6 @@ const Signup = () => {
 
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
-    const navigate = useNavigate();
 
     const handleSubmit = async (e) => {
         console.log("Form submitted!");
@@ -23,7 +22,7 @@ const Signup = () => {
             localStorage.setItem('token', token);
             localStorage.setItem('userId', userId);
             alert("User created!");
-            navigate("/");
+            window.location.href = '/';
         } catch(error) {
             alert(error.message);
         }

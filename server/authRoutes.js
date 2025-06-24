@@ -76,7 +76,7 @@ router.post('/logout', async(req, res) => {
 
 router.post('/', async (req, res) => {
     try {
-        const { userId, players } = req.body;
+        const { userId, players, budget } = req.body;
         const team = new Team({
             players: players.map(p => ({
                 id: p.player.id,
@@ -100,7 +100,8 @@ router.post('/', async (req, res) => {
                     reds: p.statistics[0].cards.red
                 }
             })),
-            owner: userId
+            owner: userId,
+            budget: budget
         });
 
         await team.save();

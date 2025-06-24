@@ -31,6 +31,7 @@ const App = () => {
 
     const result = await response.text();
     if(!response.ok) {
+      alert('Error: ' + JSON.parse(result).error);
       throw new Error(JSON.parse(result).error || 'Failed to add player ');
     }
 
@@ -42,22 +43,54 @@ const App = () => {
   }
 };
 
-const handleLogout = async () => {
-  try { 
-    await fetch("/api/auth/logout", {
-      method: "POST",
-      headers: {
-        "Authorization": `Bearer ${localStorage.getItem("token")}`,
-      },
-    });
+  const removeFromTeam = async(player) => {
+    try { 
+      const token = localStorage.getItem('token');
 
-    localStorage.removeItem("token");
-    localStorage.removeItem("userId");
-    navigate("/login");
-  } catch (error) {
-    console.error("Logout failed: ", error);
-  }
-};
+      const response = await fetch('/api/team/remove-player', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+      },
+        body: JSON.stringify({
+          player: {
+            _id: player._id,
+            price: player.price
+          }
+        })
+      });
+
+      const result = await response.text();
+      if(!response.ok) {
+        alert('Error: ' + JSON.parse(result).error);
+        throw new Error(JSON.parse(result).error || 'Failed to remove player ');
+      }
+
+      const updatedTeam = JSON.parse(result);
+      setUserTeam(updatedTeam);
+      console.log("Successfully removed player from team!");
+    } catch (error) {
+      console.error("Failed to remove player:", error);
+    }
+  };
+
+  const handleLogout = async () => {
+    try { 
+      await fetch("/api/auth/logout", {
+        method: "POST",
+        headers: {
+          "Authorization": `Bearer ${localStorage.getItem("token")}`,
+        },
+      });
+
+      localStorage.removeItem("token");
+      localStorage.removeItem("userId");
+      navigate("/login");
+    } catch (error) {
+      console.error("Logout failed: ", error);
+    }
+  };
 
 useEffect(() => {
     const fetchPlayers = async () => {
@@ -116,16 +149,20 @@ useEffect(() => {
         <h1>My Team</h1>
         <button onClick={() => handleLogout()}>Logout</button>
         {userTeam ? (
-          <ul>
-            {/* Add optional chaining and empty array fallback */}
-            {(userTeam.players || []).map((player, index) => (
-              <li key={player._id || index}>
-                {/* Handle both populated and unpopulated player references */}
-                {player.name || 'Unknown player'} 
-                {player.position && ` (${player.position})`}
-              </li>
-            ))}
-          </ul>
+          <div>
+            <h2>Your budget: {userTeam.budget}</h2>
+            <ul>
+              {/* Add optional chaining and empty array fallback */}
+              {(userTeam.players || []).map((player, index) => (
+                <li key={player._id || index}>
+                  {/* Handle both populated and unpopulated player references */}
+                  {player.name || 'Unknown player'} 
+                  {player.position && ` (${player.position})`}
+                  <button onClick ={() => removeFromTeam(player)}>Remove</button>
+                </li>
+              ))}
+            </ul>
+          </div>
         ) : (
           <p>No team yet! Add players above.</p>
         )}

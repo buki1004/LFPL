@@ -10,7 +10,8 @@ const teamSchema = new mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId, 
         ref: 'User',
         required: true
-    }
+    },
+    budget: { type: Number, default: 100}
 });
 
 module.exports = mongoose.model('Team', teamSchema);
