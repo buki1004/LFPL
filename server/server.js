@@ -2,6 +2,7 @@ const express = require('express')
 const mongoose = require('mongoose');
 const authRoutes = require('./authRoutes');
 const teamRoutes = require('./teamRoutes');
+const pointsTest = require('./pointsTest');
 const cors = require('cors');
 const fs = require('fs');
 const path = require('path');
@@ -25,6 +26,7 @@ require('./models/Team')
 
 app.use('/api/auth', authRoutes);
 app.use('/api/team', teamRoutes);
+app.use('/api', pointsTest);
 
 
 

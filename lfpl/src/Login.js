@@ -1,37 +1,35 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
 
 
 const Login = () => {
 
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
-    const navigate = useNavigate();
 
     const handleLogin = async (e) => {
         e.preventDefault();
-        console.log("Form submitted");
         try {
-            console.log("Trying to fetch...");
+            localStorage.clear();
+
             const response = await fetch("/api/auth/login", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ email, password }),
             });
-            console.log("Got response: ", response);
 
             const data = await response.json();
-            console.log("Response data: ", data);
 
-            if(!response.ok) {
+            if (!response.ok) {
+                if (data.clearAuth) {
+                    localStorage.clear();
+                }
                 throw new Error(data.message || "Login failed");
             }
 
             localStorage.setItem('token', data.token);
             localStorage.setItem('userId', data.userId);
             localStorage.setItem('teamId', data.teamId);
-            console.log("Login successfull, navigating...")
-            navigate("/");
+            window.location.href = '/';
         } catch(error) {
             alert(error.message);
         }

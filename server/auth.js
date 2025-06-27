@@ -2,27 +2,20 @@ const jwt = require('jsonwebtoken');
 
 module.exports = (req, res, next) => {
   try {
-    console.log('Received headers:', req.headers);
     const authHeader = req.header('Authorization');
-
     if (!authHeader) {
-      console.log('No authorization header found');
-      return res.status(401).json({ error: 'No token provided'});
+      return res.status(401).json({ error: 'No token provided', clearAuth: true});
     }
 
     const token = authHeader.replace('Bearer ', '');
-
     if (!token) {
-      console.log('Empty token');
-      return res.status(401).json({ error: 'Malformed token'});
+      return res.status(401).json({ error: 'Malformed token', clearAuth: true});
     }
 
-    console.log('Veryfing token: ', token);
-    const decoded = jwt.verify(token, 'your-secret-key'); // Same key used in login
-    req.user = decoded; // Attach user data to request
+    const decoded = jwt.verify(token, 'your-secret-key');
+    req.user = { _id: decoded._id }; // Attach user data to request
     next();
   } catch (error) {
-    /*console.error('Auth error:', error.message);*/
-    res.status(401).json({ error: 'Invalid token' });
+    res.status(401).json({ error: 'Invalid token', clearAuth: true });
   }
 };

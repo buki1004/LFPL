@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 
 
 const Signup = () => {
@@ -7,8 +6,7 @@ const Signup = () => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
 
-    const handleSubmit = async (e) => {
-        console.log("Form submitted!");
+    const handleSignup = async (e) => {
         e.preventDefault();
         try {
             const response = await fetch("/api/auth/signup", {
@@ -16,11 +14,16 @@ const Signup = () => {
                 headers: { "Content-Type": "application/json"},
                 body: JSON.stringify({ email, password }),
             });
-            const { message, token, userId } = await response.json();
-            if(!response.ok) throw new Error(message.message || "Signup failed");
+            /*const { message, token, userId } = await response.json();*/
+            const data = await response.json();
+            if (!response.ok) {
+                localStorage.clear();
+                throw new Error(data.error || "Signup failed");
+            }
 
-            localStorage.setItem('token', token);
-            localStorage.setItem('userId', userId);
+            localStorage.setItem('token', data.token);
+            localStorage.setItem('userId', data.userId);
+            localStorage.setItem('teamId', data.teamId);
             alert("User created!");
             window.location.href = '/';
         } catch(error) {
@@ -30,7 +33,7 @@ const Signup = () => {
 
     return (
         <div>
-            <form onSubmit={handleSubmit}>
+            <form onSubmit={handleSignup}>
             <h2>Sign up</h2>
             <input
                 type="email"
@@ -42,7 +45,7 @@ const Signup = () => {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)} 
             />
-            <button type="submit" onClick={handleSubmit}>Sign up</button>
+            <button type="submit" onClick={handleSignup}>Sign up</button>
             </form>
             <a href='/login'>Already have an account? Click here to login</a>
         </div>

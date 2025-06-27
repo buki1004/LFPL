@@ -11,7 +11,8 @@ const teamSchema = new mongoose.Schema({
         ref: 'User',
         required: true
     },
-    budget: { type: Number, default: 100}
+    budget: { type: Number, default: 10000},
+    points: {type: Number, default: 0}
 });
 
 module.exports = mongoose.model('Team', teamSchema);

@@ -14,9 +14,9 @@ router.post('/signup', async (req,res) => {
     try {
         const { email, password } = req.body;
 
-        const existingUser = await User.findOne({ email });
+        const existingUser = await User.findOne({ email }).select('_id');
         if(existingUser) {
-            return res.status(400).json({ message: 'User already exists' });
+            return res.status(400).json({ message: 'User already exists', clearAuth: true});
         }
 
         const hashedPassword = await bcrypt.hash(password, 12);
@@ -26,6 +26,7 @@ router.post('/signup', async (req,res) => {
             players: [],
             owner: user._id,
         });
+
         await team.save();
         user.team = team._id;
         await user.save();
@@ -43,19 +44,18 @@ router.post('/signup', async (req,res) => {
         });
 
     } catch (error) {
-        res.status(500).json({ message: 'Something went wrong' });
+        res.status(500).json({ message: 'Something went wrong', clearAuth: true});
     }
 });
 
 router.post('/login', async (req, res) => {
   try {
-    const user = await User.findOne({ email: req.body.email })
-                         .populate('team'); // ← THIS ENSURES TEAM PERSISTENCE
+    const user = await User.findOne({ email: req.body.email }).populate('team');
 
     if (!user) return res.status(401).json({ error: 'Invalid credentials' });
 
     const token = jwt.sign(
-      { _id: user._id }, // Store ONLY user ID in token
+      { _id: user._id },
       'your-secret-key',
       { expiresIn: '1h' }
     );
@@ -63,7 +63,7 @@ router.post('/login', async (req, res) => {
     res.json({
       token,
       userId: user._id,
-      teamId: user.team?._id // Always return current team
+      teamId: user.team?._id
     });
   } catch (error) {
     res.status(500).json({ error: 'Login failed' });
@@ -83,6 +83,7 @@ router.post('/', async (req, res) => {
                 name: p.player.name,
                 position: p.statistics[0].games.position,
                 price: p.player.price,
+                points: p.player.points,
                 statistics: {
                     appearances: p.statistics[0].games.appearances,
                     minutes: p.statistics[0].games.minutes,

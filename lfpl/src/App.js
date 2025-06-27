@@ -1,17 +1,19 @@
 import React, { useEffect, useState } from "react";
 import './App.css';
-import { BrowserRouter, Routes, Route, Navigate, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 const App = () => {
 
   const [backendData, setBackendData] = useState({ response: [] });
   const [query, setQuery] = useState("");
   const [userTeam, setUserTeam] = useState(null);
+  const [userPoints, setUserPoints] = useState(0);
   const navigate = useNavigate();
 
   const addToTeam = async (player) => {
   try {
     const token = localStorage.getItem('token');
+    const roundedPrice = Math.round(player.player.price * 100);
 
     const response = await fetch('/api/team/add-player', {
       method: 'POST',
@@ -24,7 +26,7 @@ const App = () => {
           id: player.player.id,
           name: player.player.name,
           position: player.statistics[0].games.position,
-          price: player.player.price
+          price: roundedPrice
         }
       })
     });
@@ -75,6 +77,7 @@ const App = () => {
     }
   };
 
+
   const handleLogout = async () => {
     try { 
       await fetch("/api/auth/logout", {
@@ -86,11 +89,28 @@ const App = () => {
 
       localStorage.removeItem("token");
       localStorage.removeItem("userId");
+      localStorage.removeItem("teamId");
       navigate("/login");
     } catch (error) {
       console.error("Logout failed: ", error);
     }
   };
+
+  const simulatePoints = async () => {
+    try {
+      const token = localStorage.getItem('token');
+      const response = await fetch('/api/pointsTest', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+      }});
+      const points = await response.json();
+      setUserPoints(points);
+    } catch (error) {
+      console.error("Simulation failed: ", error);
+    }
+  }
 
 useEffect(() => {
     const fetchPlayers = async () => {
@@ -106,24 +126,39 @@ useEffect(() => {
   }, [query]);
 
   useEffect(() => {
-    const fetchTeam = async () => {
-      try {
-        const response = await fetch('/api/team/my-team', {
-          headers: {
-            'Authorization': `Bearer ${localStorage.getItem('token')}`
-          }
-        });
-        const data = await response.json();
-        setUserTeam(data);
-      } catch(error) {
-        console.error("Failed to fetch team:", error);
-      }
-    };
+    const fetchData = async () => {
+    const token = localStorage.getItem('token');
+    if (!token) return;
 
-    if(localStorage.getItem('token')) {
-      fetchTeam();
+    try {
+      const [teamResponse, pointsResponse] = await Promise.all([
+        fetch('/api/team/my-team', {
+          headers: { 'Authorization': `Bearer ${token}` }
+        }),
+        fetch('/api/fetchPoints', {
+          method: 'POST',
+          headers: { 
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+          }
+        })
+      ]);
+
+      const [teamData, pointsData] = await Promise.all([
+        teamResponse.json(),
+        pointsResponse.json()
+      ]);
+
+      setUserTeam(teamData);
+      setUserPoints(pointsData);
+      
+    } catch (error) {
+      console.error("Fetch failed:", error);
     }
-  }, []);
+  };
+
+  fetchData();
+}, []);
 
   return ( 
     <div>
@@ -150,7 +185,9 @@ useEffect(() => {
         <button onClick={() => handleLogout()}>Logout</button>
         {userTeam ? (
           <div>
-            <h2>Your budget: {userTeam.budget}</h2>
+            <h2>Your points: {userPoints}</h2>
+            <button onClick={() => simulatePoints()}>Simulate</button>
+            <h2>Your budget: {parseFloat((userTeam.budget / 100).toFixed(2))}</h2>
             <ul>
               {/* Add optional chaining and empty array fallback */}
               {(userTeam.players || []).map((player, index) => (
