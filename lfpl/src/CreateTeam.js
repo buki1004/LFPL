@@ -2,12 +2,22 @@ import React, { useEffect, useState } from "react";
 import "./App.css";
 import { useNavigate } from "react-router-dom";
 
-const App = () => {
+const CreateTeam = () => {
   const [backendData, setBackendData] = useState({ response: [] });
   const [query, setQuery] = useState("");
   const [userTeam, setUserTeam] = useState(null);
-  const [userPoints, setUserPoints] = useState(0);
+  const [isLoading, setIsLoading] = useState(true);
   const navigate = useNavigate();
+  const [authChecked, setAuthChecked] = useState(false);
+
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (!token) {
+      navigate("/login");
+    } else {
+      setAuthChecked(true);
+    }
+  }, [navigate]);
 
   const addToTeam = async (player) => {
     try {
@@ -76,42 +86,19 @@ const App = () => {
     }
   };
 
-  const handleLogout = async () => {
-    try {
-      await fetch("/api/auth/logout", {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
-        },
-      });
-
-      localStorage.removeItem("token");
-      localStorage.removeItem("userId");
-      localStorage.removeItem("teamId");
-      navigate("/login");
-    } catch (error) {
-      console.error("Logout failed: ", error);
+  const saveTeam = () => {
+    if (userTeam?.players?.length >= 15) {
+      navigate("/"); // Redirect to home if team is complete
+    } else {
+      alert(
+        `You need ${
+          15 - (userTeam?.players?.length || 0)
+        } more players to complete your team!`
+      );
     }
   };
 
-  const simulatePoints = async () => {
-    try {
-      const token = localStorage.getItem("token");
-      const response = await fetch("/api/pointsTest", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-      });
-      const points = await response.json();
-      setUserPoints(points);
-    } catch (error) {
-      console.error("Simulation failed: ", error);
-    }
-  };
-
-  const groupAndSortPlayers = (players) => {
+  const groupAndSortPlayers = (players = []) => {
     const positionOrder = {
       Goalkeeper: 0,
       Defender: 1,
@@ -155,38 +142,33 @@ const App = () => {
   }, [query]);
 
   useEffect(() => {
+    if (!authChecked) return;
+
     const fetchData = async () => {
       const token = localStorage.getItem("token");
-      if (!token) return;
-
       try {
-        const [teamResponse, pointsResponse] = await Promise.all([
-          fetch("/api/team/my-team", {
-            headers: { Authorization: `Bearer ${token}` },
-          }),
-          fetch("/api/fetchPoints", {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: `Bearer ${token}`,
-            },
-          }),
-        ]);
+        setIsLoading(true);
+        const response = await fetch("/api/team/my-team", {
+          headers: { Authorization: `Bearer ${token}` },
+        });
 
-        const [teamData, pointsData] = await Promise.all([
-          teamResponse.json(),
-          pointsResponse.json(),
-        ]);
+        if (!response.ok) throw new Error(await response.text());
 
+        const teamData = await response.json();
         setUserTeam(teamData);
-        setUserPoints(pointsData);
       } catch (error) {
         console.error("Fetch failed:", error);
+        if (error.message.includes("401")) {
+          localStorage.removeItem("token");
+          navigate("/login");
+        }
+      } finally {
+        setIsLoading(false);
       }
     };
 
     fetchData();
-  }, []);
+  }, [authChecked, navigate]);
 
   return (
     <div>
@@ -211,40 +193,44 @@ const App = () => {
       </div>
       <div className="accountList">
         <h1>My Team</h1>
-        <button onClick={() => handleLogout()}>Logout</button>
-        {userTeam ? (
+
+        {isLoading ? (
+          <p>Loading team data...</p>
+        ) : userTeam ? (
           <div>
-            <h2>Your points: {userPoints}</h2>
-            <button onClick={() => simulatePoints()}>Simulate</button>
-            <h2>
-              Your budget: {parseFloat((userTeam.budget / 100).toFixed(2))}
-            </h2>
-            {groupAndSortPlayers(userTeam.players || []).map(
-              ([position, players]) => (
-                <div key={position}>
-                  <h3>
-                    {position}s ({players.length})
-                  </h3>
-                  <ul>
-                    {players.map((player) => (
-                      <li key={player._id}>
-                        {player.name} ({(player.price / 100).toFixed(1)})
-                        <button onClick={() => removeFromTeam(player)}>
-                          Remove
-                        </button>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
+            <h2>Your budget: {(userTeam.budget / 100).toFixed(1)}</h2>
+            <button onClick={() => saveTeam()}>Save team</button>
+
+            {userTeam.players.length > 0 ? (
+              groupAndSortPlayers(userTeam.players).map(
+                ([position, players]) => (
+                  <div key={position}>
+                    <h3>
+                      {position}s ({players.length})
+                    </h3>
+                    <ul>
+                      {players.map((player) => (
+                        <li key={player._id}>
+                          {player.name} ({(player.price / 100).toFixed(1)})
+                          <button onClick={() => removeFromTeam(player)}>
+                            Remove
+                          </button>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                )
               )
+            ) : (
+              <p>No players in your team yet</p>
             )}
           </div>
         ) : (
-          <p>No team yet! Add players above.</p>
+          <p>Unable to load team data</p>
         )}
       </div>
     </div>
   );
 };
 
-export default App;
+export default CreateTeam;
