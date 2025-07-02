@@ -66,7 +66,7 @@ const CreateTeam = () => {
         },
         body: JSON.stringify({
           player: {
-            _id: player._id,
+            _id: player.playerId,
             price: player.price,
           },
         }),
@@ -88,7 +88,7 @@ const CreateTeam = () => {
 
   const saveTeam = () => {
     if (userTeam?.players?.length >= 15) {
-      navigate("/"); // Redirect to home if team is complete
+      navigate("/");
     } else {
       alert(
         `You need ${
@@ -106,11 +106,20 @@ const CreateTeam = () => {
       Attacker: 3,
     };
 
-    const grouped = players.reduce((acc, player) => {
-      if (!acc[player.position]) {
-        acc[player.position] = [];
-      }
-      acc[player.position].push(player);
+    const grouped = players.reduce((acc, entry) => {
+      if (!entry.player || !entry.player.position) return acc;
+
+      const position = entry.player.position;
+      if (!acc[position]) acc[position] = [];
+
+      acc[position].push({
+        ...entry.player,
+        isSubstitute: entry.isSubstitute,
+        isCaptain: entry.isCaptain,
+        playerId: entry.player._id,
+        _id: entry._id,
+      });
+
       return acc;
     }, {});
 

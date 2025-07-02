@@ -1,12 +1,14 @@
 import React, { useEffect, useState } from "react";
 import "./App.css";
 import { useNavigate } from "react-router-dom";
+import "./Modal.css";
 
 const App = () => {
   const [backendData, setBackendData] = useState({ response: [] });
   const [query, setQuery] = useState("");
   const [userTeam, setUserTeam] = useState(null);
   const [userPoints, setUserPoints] = useState(0);
+  const [modalOpenForPlayer, setModalOpenForPlayer] = useState(null);
   const navigate = useNavigate();
 
   const addToTeam = async (player) => {
@@ -56,7 +58,7 @@ const App = () => {
         },
         body: JSON.stringify({
           player: {
-            _id: player._id,
+            _id: player.playerId,
             price: player.price,
           },
         }),
@@ -111,7 +113,7 @@ const App = () => {
     }
   };
 
-  const groupAndSortPlayers = (players) => {
+  const groupAndSortPlayers = (players = []) => {
     const positionOrder = {
       Goalkeeper: 0,
       Defender: 1,
@@ -119,11 +121,20 @@ const App = () => {
       Attacker: 3,
     };
 
-    const grouped = players.reduce((acc, player) => {
-      if (!acc[player.position]) {
-        acc[player.position] = [];
-      }
-      acc[player.position].push(player);
+    const grouped = players.reduce((acc, entry) => {
+      if (!entry.player || !entry.player.position) return acc;
+
+      const position = entry.player.position;
+      if (!acc[position]) acc[position] = [];
+
+      acc[position].push({
+        ...entry.player,
+        isSubstitute: entry.isSubstitute,
+        isCaptain: entry.isCaptain,
+        playerId: entry.player._id,
+        _id: entry._id,
+      });
+
       return acc;
     }, {});
 
@@ -139,6 +150,49 @@ const App = () => {
     return Object.entries(grouped).sort(
       ([aPos], [bPos]) => positionOrder[aPos] - positionOrder[bPos]
     );
+  };
+
+  const makeCaptain = async (player) => {
+    try {
+      const token = localStorage.getItem("token");
+      const response = await fetch("/api/team/make-captain", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ playerId: player.player._id }),
+      });
+
+      if (!response.ok) throw new Error("Failed to set captain");
+
+      const updatedTeam = await response.json();
+      setUserTeam(updatedTeam);
+    } catch (error) {
+      console.log("Error");
+    }
+  };
+
+  const makeSubstitute = async (player) => {
+    try {
+      const token = localStorage.getItem("token");
+      const response = await fetch("/api/team/substitute", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ playerId: player.player._id }),
+      });
+
+      if (!response.ok) throw new Error("Failed to make substitute");
+
+      console.log("Succes at doing sub");
+      const updatedTeam = await response.json();
+      setUserTeam(updatedTeam);
+    } catch (error) {
+      console.log("Not good");
+    }
   };
 
   useEffect(() => {
@@ -228,7 +282,13 @@ const App = () => {
                   <ul>
                     {players.map((player) => (
                       <li key={player._id}>
-                        {player.name} ({(player.price / 100).toFixed(1)})
+                        <button
+                          onClick={() => setModalOpenForPlayer(player._id)}
+                        >
+                          Click Me
+                        </button>
+                        {player.name} ({(player.price / 100).toFixed(1)}){" "}
+                        {player.points}{" "}
                         <button onClick={() => removeFromTeam(player)}>
                           Remove
                         </button>
@@ -243,6 +303,44 @@ const App = () => {
           <p>No team yet! Add players above.</p>
         )}
       </div>
+      {modalOpenForPlayer && (
+        <div className="modal-overlay">
+          <div className="modal-content">
+            <h3>
+              {
+                userTeam?.players.find((p) => p._id === modalOpenForPlayer)
+                  ?.player?.name
+              }
+            </h3>
+            <button
+              onClick={() => {
+                makeCaptain(
+                  userTeam.players.find((p) => p._id === modalOpenForPlayer)
+                );
+                setModalOpenForPlayer(null);
+              }}
+            >
+              Make captain
+            </button>
+            <button
+              onClick={() => {
+                makeSubstitute(
+                  userTeam.players.find((p) => p._id === modalOpenForPlayer)
+                );
+                setModalOpenForPlayer(null);
+              }}
+            >
+              Sub
+            </button>
+            <button
+              className="close-btn"
+              onClick={() => setModalOpenForPlayer(null)}
+            >
+              &times;
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

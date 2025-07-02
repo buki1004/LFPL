@@ -4,8 +4,19 @@ const teamSchema = new mongoose.Schema({
   name: { type: String, default: "My team" },
   players: [
     {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "Player",
+      player: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Player",
+        required: true,
+      },
+      isSubstitute: {
+        type: Boolean,
+        default: true,
+      },
+      isCaptain: {
+        type: Boolean,
+        default: false,
+      },
     },
   ],
   owner: {

@@ -17,10 +17,10 @@ router.post("/pointsTest", auth, async (req, res) => {
 
     await Player.bulkWrite(update);
 
-    const allTeams = await Team.find().populate("players");
+    const allTeams = await Team.find().populate("players.player");
     const teamUpdates = allTeams.map((team) => {
       const totalPoints = team.players.reduce(
-        (sum, player) => sum + (player.points || 0),
+        (sum, p) => sum + (p.player?.points || 0),
         0
       );
       return {
