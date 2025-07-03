@@ -19,10 +19,13 @@ router.post("/pointsTest", auth, async (req, res) => {
 
     const allTeams = await Team.find().populate("players.player");
     const teamUpdates = allTeams.map((team) => {
-      const totalPoints = team.players.reduce(
-        (sum, p) => sum + (p.player?.points || 0),
-        0
-      );
+      const totalPoints = team.players.reduce((sum, p) => {
+        if (p.isSubstitute) return sum;
+        const basePoints = p.player?.points || 0;
+        const finalPoints = p.isCaptain ? basePoints * 2 : basePoints;
+
+        return sum + finalPoints;
+      }, 0);
       return {
         updateOne: {
           filter: { _id: team._id },

@@ -273,31 +273,72 @@ const App = () => {
             <h2>
               Your budget: {parseFloat((userTeam.budget / 100).toFixed(2))}
             </h2>
-            {groupAndSortPlayers(userTeam.players || []).map(
-              ([position, players]) => (
-                <div key={position}>
-                  <h3>
-                    {position}s ({players.length})
-                  </h3>
-                  <ul>
-                    {players.map((player) => (
-                      <li key={player._id}>
-                        <button
-                          onClick={() => setModalOpenForPlayer(player._id)}
-                        >
-                          Click Me
-                        </button>
-                        {player.name} ({(player.price / 100).toFixed(1)}){" "}
-                        {player.points}{" "}
-                        <button onClick={() => removeFromTeam(player)}>
-                          Remove
-                        </button>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              )
-            )}
+            <h2>Starters</h2>
+            {groupAndSortPlayers(
+              userTeam.players.filter((p) => !p.isSubstitute)
+            ).map(([position, players]) => (
+              <div key={position}>
+                <h3>
+                  {position}s ({players.length})
+                </h3>
+                <ul>
+                  {players.map((player) => (
+                    <li key={player._id}>
+                      <button onClick={() => setModalOpenForPlayer(player._id)}>
+                        Click Me
+                      </button>
+                      {player.isCaptain ? (
+                        <strong>
+                          {player.name} ({(player.price / 100).toFixed(1)}){" "}
+                          {player.points * 2}
+                        </strong>
+                      ) : (
+                        <>
+                          {player.name} ({(player.price / 100).toFixed(1)}){" "}
+                          {player.points}
+                        </>
+                      )}
+                      <button onClick={() => removeFromTeam(player)}>
+                        Remove
+                      </button>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            ))}
+            <h2>Substitutes</h2>
+            {groupAndSortPlayers(
+              userTeam.players.filter((p) => p.isSubstitute)
+            ).map(([position, players]) => (
+              <div key={position}>
+                <h3>
+                  {position}s ({players.length})
+                </h3>
+                <ul>
+                  {players.map((player) => (
+                    <li key={player._id}>
+                      <button onClick={() => setModalOpenForPlayer(player._id)}>
+                        Click Me
+                      </button>
+                      {player.isCaptain ? (
+                        <strong>
+                          {player.name} ({(player.price / 100).toFixed(1)}){" "}
+                          {player.points}
+                        </strong>
+                      ) : (
+                        <>
+                          {player.name} ({(player.price / 100).toFixed(1)}){" "}
+                          {player.points}
+                        </>
+                      )}
+                      <button onClick={() => removeFromTeam(player)}>
+                        Remove
+                      </button>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            ))}
           </div>
         ) : (
           <p>No team yet! Add players above.</p>
