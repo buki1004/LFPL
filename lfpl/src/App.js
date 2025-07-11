@@ -195,6 +195,37 @@ const App = () => {
     }
   };
 
+  const saveTeam = () => {
+    const positions = {
+      Goalkeeper: 0,
+      Defender: 0,
+      Midfielder: 0,
+      Attacker: 0,
+    };
+
+    userTeam.players.forEach((p) => {
+      if (!p.isSubstitute) {
+        const pos = p.player.position;
+        if (pos in positions) {
+          positions[pos]++;
+        }
+      }
+    });
+
+    console.log(positions);
+
+    if (
+      positions.Goalkeeper < 1 ||
+      positions.Defender < 3 ||
+      positions.Midfielder < 3 ||
+      positions.Attacker < 1
+    ) {
+      alert(
+        "Your team needs to have at least 1 Goalkeeper, 3 Defenders, 3 Midfielders, 1 Attacker"
+      );
+    }
+  };
+
   useEffect(() => {
     const fetchPlayers = async () => {
       try {
@@ -273,6 +304,7 @@ const App = () => {
             <h2>
               Your budget: {parseFloat((userTeam.budget / 100).toFixed(2))}
             </h2>
+            <button onClick={() => saveTeam()}>Save team</button>
             <h2>Starters</h2>
             {groupAndSortPlayers(
               userTeam.players.filter((p) => !p.isSubstitute)

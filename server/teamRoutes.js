@@ -159,15 +159,31 @@ router.post("/substitute", auth, async (req, res) => {
         Attacker: 3,
       };
 
+      const positionMinimums = {
+        Goalkeeper: 1,
+        Defender: 3,
+        Midfielder: 3,
+        Attacker: 1,
+      };
+
+      const totalMax = 11;
+
       const playerPosition = playerSubdoc.player.position;
 
       const currentStarters = team.players.filter(
         (p) => p.player.position === playerPosition && !p.isSubstitute
       ).length;
 
+      const currentPlayers = team.players.filter((p) => !p.isSubstitute).length;
+
       if (currentStarters >= positionLimits[playerPosition]) {
         return res.status(400).json({
           error: `Maximum ${positionLimits[playerPosition]} ${playerPosition}(s) already in starting team`,
+        });
+      }
+      if (currentPlayers >= totalMax) {
+        return res.status(400).json({
+          error: "There are already 11 players in the starting 11!",
         });
       }
     }
