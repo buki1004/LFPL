@@ -1,33 +1,53 @@
 .app {
-    margin: 50px;
+  margin: 50px;
 }
 
 .playerList {
-    text-align: center;
-    height: 100%;
-    width: 50%;
-    float: left;
+  text-align: center;
+  height: 100%;
+  width: 50%;
+  float: left;
 }
 
 .accountList {
-    text-align: center;
-    height: 100%;
-    width: 50%;
-    float: left;
+  text-align: center;
+  height: 100%;
+  width: 50%;
+  float: left;
 }
 
 .search {
-    padding: 0px;
-    font-size: 15px;
+  padding: 0px;
+  font-size: 15px;
 }
 
 .list {
-    padding: 0;
-    list-style: none;
-    text-align: center;
+  padding: 0;
+  list-style: none;
+  text-align: center;
 }
 
 .listItem {
-    margin-bottom: 20px;
-    font-size: 15px;
+  margin-bottom: 20px;
+  font-size: 15px;
+}
+
+.nav {
+  background-color: #333;
+  color: white;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 2rem;
+  padding: 0 1rem;
+  height: 30px;
+}
+
+.nav a {
+  color: inherit;
+  text-decoration: none;
+}
+
+.teamList {
+  list-style-type: none;
 }

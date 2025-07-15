@@ -6,10 +6,13 @@ import App from "./App";
 import Signup from "./Signup";
 import Login from "./Login";
 import CreateTeam from "./CreateTeam";
+import Team from "./Team";
+import Navbar from "./Navbar";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
   <BrowserRouter>
+    <Navbar></Navbar>
     <Routes>
       <Route
         path="/"
@@ -20,6 +23,7 @@ root.render(
       <Route path="/signup" element={<Signup />} />
       <Route path="/login" element={<Login />} />
       <Route path="/createteam" element={<CreateTeam />} />
+      <Route path="/team" element={<Team />} />
     </Routes>
   </BrowserRouter>
 );

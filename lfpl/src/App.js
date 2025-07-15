@@ -313,7 +313,7 @@ const App = () => {
                 <h3>
                   {position}s ({players.length})
                 </h3>
-                <ul>
+                <ul className="teamList">
                   {players.map((player) => (
                     <li key={player._id}>
                       <button onClick={() => setModalOpenForPlayer(player._id)}>
