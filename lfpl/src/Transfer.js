@@ -1,13 +1,10 @@
-import React, { useEffect, useState } from "react";
-import "./App.css";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
-const App = () => {
+const Transfers = () => {
   const [backendData, setBackendData] = useState({ response: [] });
   const [query, setQuery] = useState("");
   const [userTeam, setUserTeam] = useState(null);
-  const [userPoints, setUserPoints] = useState(0);
-  const [modalOpenForPlayer, setModalOpenForPlayer] = useState(null);
   const navigate = useNavigate();
 
   const addToTeam = async (player) => {
@@ -77,39 +74,33 @@ const App = () => {
     }
   };
 
-  const handleLogout = async () => {
-    try {
-      await fetch("/api/auth/logout", {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
-        },
-      });
+  const saveTeam = () => {
+    const positions = {
+      Goalkeeper: 0,
+      Defender: 0,
+      Midfielder: 0,
+      Attacker: 0,
+    };
 
-      localStorage.removeItem("token");
-      localStorage.removeItem("userId");
-      localStorage.removeItem("teamId");
-      navigate("/login");
-    } catch (error) {
-      console.error("Logout failed: ", error);
-    }
-  };
+    userTeam.players.forEach((p) => {
+      const pos = p.player.position;
+      if (pos in positions) {
+        positions[pos]++;
+      }
+    });
 
-  const simulatePoints = async () => {
-    try {
-      const token = localStorage.getItem("token");
-      const response = await fetch("/api/pointsTest", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-      });
-      const points = await response.json();
-      setUserPoints(points);
-    } catch (error) {
-      console.error("Simulation failed: ", error);
-    }
+    console.log(positions);
+
+    if (
+      positions.Goalkeeper < 2 ||
+      positions.Defender < 5 ||
+      positions.Midfielder < 5 ||
+      positions.Attacker < 3
+    ) {
+      alert(
+        "Your team needs to have 2 Goalkeepers, 5 Defenders, 5 Midfielders and 3 Attackers"
+      );
+    } else navigate("/");
   };
 
   const groupAndSortPlayers = (players = []) => {
@@ -151,80 +142,6 @@ const App = () => {
     );
   };
 
-  const makeCaptain = async (player) => {
-    try {
-      const token = localStorage.getItem("token");
-      const response = await fetch("/api/team/make-captain", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({ playerId: player.player._id }),
-      });
-
-      if (!response.ok) throw new Error("Failed to set captain");
-
-      const updatedTeam = await response.json();
-      setUserTeam(updatedTeam);
-    } catch (error) {
-      console.log("Error");
-    }
-  };
-
-  const makeSubstitute = async (player) => {
-    try {
-      const token = localStorage.getItem("token");
-      const response = await fetch("/api/team/substitute", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({ playerId: player.player._id }),
-      });
-
-      if (!response.ok) throw new Error("Failed to make substitute");
-
-      console.log("Succes at doing sub");
-      const updatedTeam = await response.json();
-      setUserTeam(updatedTeam);
-    } catch (error) {
-      console.log("Not good");
-    }
-  };
-
-  const saveTeam = () => {
-    const positions = {
-      Goalkeeper: 0,
-      Defender: 0,
-      Midfielder: 0,
-      Attacker: 0,
-    };
-
-    userTeam.players.forEach((p) => {
-      if (!p.isSubstitute) {
-        const pos = p.player.position;
-        if (pos in positions) {
-          positions[pos]++;
-        }
-      }
-    });
-
-    console.log(positions);
-
-    if (
-      positions.Goalkeeper < 1 ||
-      positions.Defender < 3 ||
-      positions.Midfielder < 3 ||
-      positions.Attacker < 1
-    ) {
-      alert(
-        "Your team needs to have at least 1 Goalkeeper, 3 Defenders, 3 Midfielders, 1 Attacker"
-      );
-    }
-  };
-
   useEffect(() => {
     const fetchPlayers = async () => {
       try {
@@ -239,37 +156,22 @@ const App = () => {
   }, [query]);
 
   useEffect(() => {
-    const fetchData = async () => {
+    const fetchTeam = async () => {
       const token = localStorage.getItem("token");
       if (!token) return;
 
       try {
-        const [teamResponse, pointsResponse] = await Promise.all([
-          fetch("/api/team/my-team", {
-            headers: { Authorization: `Bearer ${token}` },
-          }),
-          fetch("/api/fetchPoints", {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: `Bearer ${token}`,
-            },
-          }),
-        ]);
-
-        const [teamData, pointsData] = await Promise.all([
-          teamResponse.json(),
-          pointsResponse.json(),
-        ]);
-
-        setUserTeam(teamData);
-        setUserPoints(pointsData);
+        const response = await fetch("/api/team/my-team", {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        const data = await response.json();
+        setUserTeam(data);
       } catch (error) {
-        console.error("Fetch failed:", error);
+        console.error("Error when fetching team:", error);
       }
     };
 
-    fetchData();
+    fetchTeam();
   }, []);
 
   return (
@@ -295,11 +197,8 @@ const App = () => {
       </div>
       <div className="accountList">
         <h1>My Team</h1>
-        <button onClick={() => handleLogout()}>Logout</button>
         {userTeam ? (
           <div>
-            <h2>Your points: {userPoints}</h2>
-            <button onClick={() => simulatePoints()}>Simulate</button>
             <h2>
               Your budget: {parseFloat((userTeam.budget / 100).toFixed(2))}
             </h2>
@@ -315,9 +214,6 @@ const App = () => {
                 <ul className="teamList">
                   {players.map((player) => (
                     <li key={player._id}>
-                      <button onClick={() => setModalOpenForPlayer(player._id)}>
-                        Click Me
-                      </button>
                       {player.isCaptain ? (
                         <strong>
                           {player.name} ({(player.price / 100).toFixed(1)}){" "}
@@ -348,9 +244,6 @@ const App = () => {
                 <ul className="teamList">
                   {players.map((player) => (
                     <li key={player._id}>
-                      <button onClick={() => setModalOpenForPlayer(player._id)}>
-                        Click Me
-                      </button>
                       {player.isCaptain ? (
                         <strong>
                           {player.name} ({(player.price / 100).toFixed(1)}){" "}
@@ -375,46 +268,8 @@ const App = () => {
           <p>No team yet! Add players above.</p>
         )}
       </div>
-      {modalOpenForPlayer && (
-        <div className="modal-overlay">
-          <div className="modal-content">
-            <h3>
-              {
-                userTeam?.players.find((p) => p._id === modalOpenForPlayer)
-                  ?.player?.name
-              }
-            </h3>
-            <button
-              onClick={() => {
-                makeCaptain(
-                  userTeam.players.find((p) => p._id === modalOpenForPlayer)
-                );
-                setModalOpenForPlayer(null);
-              }}
-            >
-              Make captain
-            </button>
-            <button
-              onClick={() => {
-                makeSubstitute(
-                  userTeam.players.find((p) => p._id === modalOpenForPlayer)
-                );
-                setModalOpenForPlayer(null);
-              }}
-            >
-              Sub
-            </button>
-            <button
-              className="close-btn"
-              onClick={() => setModalOpenForPlayer(null)}
-            >
-              &times;
-            </button>
-          </div>
-        </div>
-      )}
     </div>
   );
 };
 
-export default App;
+export default Transfers;

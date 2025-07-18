@@ -1,15 +1,12 @@
 import React, { useEffect, useState } from "react";
-import "./App.css";
+import "./Team.css";
 import { useNavigate } from "react-router-dom";
 
 const Team = () => {
-  const [backendData, setBackendData] = useState({ response: [] });
   const [userTeam, setUserTeam] = useState(null);
   const [userPoints, setUserPoints] = useState(0);
   const [modalOpenForPlayer, setModalOpenForPlayer] = useState(null);
-  const [isLoading, setIsLoading] = useState(true);
   const navigate = useNavigate();
-  const [authChecked, setAuthChecked] = useState(false);
 
   const groupAndSortPlayers = (players = []) => {
     const positionOrder = {
@@ -128,8 +125,6 @@ const Team = () => {
     const token = localStorage.getItem("token");
     if (!token) {
       navigate("/login");
-    } else {
-      setAuthChecked(true);
     }
   }, [navigate]);
 
@@ -212,7 +207,7 @@ const Team = () => {
               <h3>
                 {position}s ({players.length})
               </h3>
-              <ul>
+              <ul className="teamList">
                 {players.map((player) => (
                   <li key={player._id}>
                     <button onClick={() => setModalOpenForPlayer(player._id)}>

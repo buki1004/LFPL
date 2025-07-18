@@ -7,6 +7,7 @@ import Signup from "./Signup";
 import Login from "./Login";
 import CreateTeam from "./CreateTeam";
 import Team from "./Team";
+import Transfers from "./Transfer";
 import Navbar from "./Navbar";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
@@ -24,6 +25,7 @@ root.render(
       <Route path="/login" element={<Login />} />
       <Route path="/createteam" element={<CreateTeam />} />
       <Route path="/team" element={<Team />} />
+      <Route path="/transfers" element={<Transfers />} />
     </Routes>
   </BrowserRouter>
 );
