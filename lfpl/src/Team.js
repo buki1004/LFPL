@@ -1,12 +1,37 @@
 import React, { useEffect, useState } from "react";
-import "./Team.css";
+import styles from "./Team.module.css";
 import { useNavigate } from "react-router-dom";
+import pitch from "./images/pitch.png";
 
 const Team = () => {
   const [userTeam, setUserTeam] = useState(null);
   const [userPoints, setUserPoints] = useState(0);
   const [modalOpenForPlayer, setModalOpenForPlayer] = useState(null);
   const navigate = useNavigate();
+
+  const logos = {
+    Arsenal: require("./images/Arsenal.png"),
+    "Aston Villa": require("./images/Aston Villa.png"),
+    Bournemouth: require("./images/Bournemouth.png"),
+    Brentford: require("./images/Brentford.png"),
+    Brighton: require("./images/Brighton.png"),
+    Chelsea: require("./images/Chelsea.png"),
+    "Crystal Palace": require("./images/Crystal Palace.png"),
+    Everton: require("./images/Everton.png"),
+    Fulham: require("./images/Fulham.png"),
+    Liverpool: require("./images/Liverpool.png"),
+    "Manchester City": require("./images/Manchester City.png"),
+    "Manchester United": require("./images/Manchester United.png"),
+    Newcastle: require("./images/Newcastle.png"),
+    Nottingham: require("./images/Nottingham.png"),
+    Tottenham: require("./images/Tottenham.png"),
+    "West Ham": require("./images/West Ham.png"),
+    Wolves: require("./images/Wolves.png"),
+  };
+
+  const getTeamLogo = (teamName) => {
+    return logos[teamName];
+  };
 
   const groupAndSortPlayers = (players = []) => {
     const positionOrder = {
@@ -45,6 +70,22 @@ const Team = () => {
     return Object.entries(grouped).sort(
       ([aPos], [bPos]) => positionOrder[aPos] - positionOrder[bPos]
     );
+  };
+
+  const getPlayerCoordinates = (position, index, total) => {
+    const yMap = {
+      Goalkeeper: "10%",
+      Defender: "32%",
+      Midfielder: "53%",
+      Attacker: "80%",
+    };
+
+    const y = yMap[position] || "50%";
+
+    const spacing = 100 / (total + 1);
+    const x = `${spacing * (index + 1)}%`;
+
+    return { top: y, left: x };
   };
 
   const makeCaptain = async (player) => {
@@ -163,42 +204,41 @@ const Team = () => {
   }, []);
 
   return (
-    <div className="accountList">
+    <div className={styles.accountList}>
       <h1>My Team</h1>
       {userTeam ? (
         <div>
           <h2>Your points: {userPoints}</h2>
           <button onClick={() => saveTeam()}>Save team</button>
           <h2>Starters</h2>
-          {groupAndSortPlayers(
-            userTeam.players.filter((p) => !p.isSubstitute)
-          ).map(([position, players]) => (
-            <div key={position}>
-              <h3>
-                {position}s ({players.length})
-              </h3>
-              <ul className="teamList">
-                {players.map((player) => (
-                  <li key={player._id}>
-                    <button onClick={() => setModalOpenForPlayer(player._id)}>
-                      Click Me
-                    </button>
-                    {player.isCaptain ? (
-                      <strong>
-                        {player.name} ({(player.price / 100).toFixed(1)}){" "}
-                        {player.points * 2}
-                      </strong>
-                    ) : (
-                      <>
-                        {player.name} ({(player.price / 100).toFixed(1)}){" "}
-                        {player.points}
-                      </>
-                    )}
-                  </li>
-                ))}
-              </ul>
-            </div>
-          ))}
+          <div className={styles.pitchContainer}>
+            <img src={pitch} className={styles.pitchImage} />
+            {groupAndSortPlayers(
+              userTeam.players.filter((p) => !p.isSubstitute)
+            ).flatMap(([position, players], i) =>
+              players.map((player, idx) => {
+                const coordinates = getPlayerCoordinates(
+                  position,
+                  idx,
+                  players.length
+                );
+                return (
+                  <div
+                    key={player._id}
+                    className={styles.playerMarker}
+                    style={{ top: coordinates.top, left: coordinates.left }}
+                    onClick={() => setModalOpenForPlayer(player._id)}
+                  >
+                    <img
+                      src={getTeamLogo(player.teamName)}
+                      className={styles.teamLogo}
+                    />
+                    {player.name}
+                  </div>
+                );
+              })
+            )}
+          </div>
           <h2>Substitutes</h2>
           {groupAndSortPlayers(
             userTeam.players.filter((p) => p.isSubstitute)
@@ -207,7 +247,7 @@ const Team = () => {
               <h3>
                 {position}s ({players.length})
               </h3>
-              <ul className="teamList">
+              <ul className={styles.teamList}>
                 {players.map((player) => (
                   <li key={player._id}>
                     <button onClick={() => setModalOpenForPlayer(player._id)}>
@@ -234,8 +274,8 @@ const Team = () => {
         <p>No team yet! Add players above.</p>
       )}
       {modalOpenForPlayer && (
-        <div className="modal-overlay">
-          <div className="modal-content">
+        <div className={styles.modalOverlay}>
+          <div className={styles.modalContent}>
             <h3>
               {
                 userTeam?.players.find((p) => p._id === modalOpenForPlayer)
@@ -263,7 +303,7 @@ const Team = () => {
               Sub
             </button>
             <button
-              className="close-btn"
+              className={styles.closeBtn}
               onClick={() => setModalOpenForPlayer(null)}
             >
               &times;

@@ -82,6 +82,7 @@ router.post("/", async (req, res) => {
         position: p.statistics[0].games.position,
         price: p.player.price,
         points: p.player.points,
+        teamName: p.statistics[0].team.name,
         statistics: {
           appearances: p.statistics[0].games.appearances,
           minutes: p.statistics[0].games.minutes,

@@ -6,6 +6,7 @@ const playerSchema = new mongoose.Schema({
   position: { type: String, required: true },
   price: { type: Number, default: 0 },
   points: { type: Number, default: 0 },
+  teamName: { type: String, default: "" },
   statistics: {
     appearances: Number,
     minutes: Number,

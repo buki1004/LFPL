@@ -1,0 +1,76 @@
+.accountList {
+  text-align: center;
+  height: 100%;
+  width: 100%;
+}
+
+.teamList {
+  list-style-type: none;
+}
+
+.modalOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.modalContent {
+  background: white;
+  padding: 2rem;
+  border-radius: 8px;
+  position: relative;
+  min-width: 300px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.closeBtn {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  cursor: pointer;
+}
+
+.pitchContainer {
+  position: relative;
+  width: 600px;
+  height: 780px;
+  margin: 0 auto;
+  margin-bottom: 3rem;
+}
+
+.pitchImage {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+.playerMarker {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  background: none;
+  padding: 0;
+  border-radius: 0;
+  padding: 4px 6px;
+  cursor: pointer;
+  font-size: 0.8rem;
+  text-align: center;
+  font-weight: bold;
+}
+
+.teamLogo {
+  width: 40px;
+  height: 40px;
+  object-fit: contain;
+  display: block;
+  margin: 0 auto 4px;
+}

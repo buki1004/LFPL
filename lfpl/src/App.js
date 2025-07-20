@@ -27,6 +27,7 @@ const App = () => {
             name: player.player.name,
             position: player.statistics[0].games.position,
             price: roundedPrice,
+            teamName: player.statistics[0].team.name,
           },
         }),
       });
