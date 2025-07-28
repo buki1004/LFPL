@@ -88,6 +88,11 @@ const Team = () => {
     return { top: y, left: x };
   };
 
+  const getLastName = (player) => {
+    const lastName = player.name.split(" ").pop();
+    return lastName;
+  };
+
   const makeCaptain = async (player) => {
     try {
       const token = localStorage.getItem("token");
@@ -139,26 +144,30 @@ const Team = () => {
       Attacker: 0,
     };
 
+    let count = 0;
+
     userTeam.players.forEach((p) => {
       if (!p.isSubstitute) {
         const pos = p.player.position;
         if (pos in positions) {
           positions[pos]++;
+          count++;
         }
       }
     });
-
-    console.log(positions);
 
     if (
       positions.Goalkeeper < 1 ||
       positions.Defender < 3 ||
       positions.Midfielder < 3 ||
-      positions.Attacker < 1
+      positions.Attacker < 1 ||
+      count < 11
     ) {
       alert(
-        "Your team needs to have at least 1 Goalkeeper, 3 Defenders, 3 Midfielders, 1 Attacker"
+        "Your team needs to have at least 11 players starting, and at least 1 Goalkeeper, 3 Defenders, 3 Midfielders and 1 Attacker!"
       );
+    } else {
+      navigate("/");
     }
   };
 
@@ -205,11 +214,12 @@ const Team = () => {
 
   return (
     <div className={styles.accountList}>
-      <h1>My Team</h1>
       {userTeam ? (
         <div>
           <h2>Your points: {userPoints}</h2>
-          <button onClick={() => saveTeam()}>Save team</button>
+          <button className={styles.saveTeam} onClick={() => saveTeam()}>
+            Save team
+          </button>
           <h2>Starters</h2>
           <div className={styles.pitchContainer}>
             <img src={pitch} className={styles.pitchImage} />
@@ -233,42 +243,37 @@ const Team = () => {
                       src={getTeamLogo(player.teamName)}
                       className={styles.teamLogo}
                     />
-                    {player.name}
+                    <div className={styles.playerName}>
+                      {getLastName(player)}
+                    </div>
+                    <div className={styles.playerPoints}>{player.points}</div>
                   </div>
                 );
               })
             )}
           </div>
           <h2>Substitutes</h2>
-          {groupAndSortPlayers(
-            userTeam.players.filter((p) => p.isSubstitute)
-          ).map(([position, players]) => (
-            <div key={position}>
-              <h3>
-                {position}s ({players.length})
-              </h3>
-              <ul className={styles.teamList}>
-                {players.map((player) => (
-                  <li key={player._id}>
-                    <button onClick={() => setModalOpenForPlayer(player._id)}>
-                      Click Me
-                    </button>
-                    {player.isCaptain ? (
-                      <strong>
-                        {player.name} ({(player.price / 100).toFixed(1)}){" "}
-                        {player.points}
-                      </strong>
-                    ) : (
-                      <>
-                        {player.name} ({(player.price / 100).toFixed(1)}){" "}
-                        {player.points}
-                      </>
-                    )}
-                  </li>
-                ))}
-              </ul>
-            </div>
-          ))}
+          <div className={styles.subContainer}>
+            {userTeam.players
+              .filter((p) => p.isSubstitute)
+              .map((player) => (
+                <div
+                  key={player.player._id}
+                  className={styles.subCard}
+                  onClick={() => setModalOpenForPlayer(player.player._id)}
+                >
+                  <img
+                    src={getTeamLogo(player.player.teamName)}
+                    className={styles.teamLogo}
+                  />
+                  <div className={styles.playerName}>{player.player.name}</div>
+                  <div className={styles.playerPoints}>
+                    {player.player.points}
+                  </div>
+                  <div>{player.player.position.substring(0, 3)}</div>
+                </div>
+              ))}
+          </div>
         </div>
       ) : (
         <p>No team yet! Add players above.</p>

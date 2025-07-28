@@ -1,3 +1,7 @@
+div {
+  font-family: "Rubik", sans-serif;
+}
+
 .app {
   margin: 50px;
 }
@@ -33,8 +37,8 @@
 }
 
 .nav {
-  background-color: #333;
-  color: white;
+  background: linear-gradient(to right, #00eaff, #6a68ff);
+  color: aliceblue;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -46,6 +50,7 @@
 .nav a {
   color: inherit;
   text-decoration: none;
+  font-weight: bold;
 }
 
 .teamList {

@@ -74,3 +74,54 @@
   display: block;
   margin: 0 auto 4px;
 }
+
+.playerName {
+  background-color: white;
+  border-radius: 3px 3px 0px 0px;
+  width: 80px;
+}
+
+.playerPoints {
+  background-color: gainsboro;
+  border-radius: 0px 0px 3px 3px;
+}
+
+.saveTeam {
+  background-color: #00ff85;
+  color: #000;
+  border: none;
+  padding: 6px 12px;
+  border-radius: 4px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.2s ease-in-out;
+}
+
+.saveTeam:hover {
+  background-color: #00e07b;
+}
+
+.subContainer {
+  display: flex;
+  justify-content: center;
+  gap: 16px;
+  flex-wrap: wrap;
+  margin-top: 16px;
+}
+
+.subCard {
+  cursor: pointer;
+  border-radius: 6px;
+  padding: 8px;
+  text-align: center;
+  width: 80px;
+}
+
+.subPlayerName {
+  font-size: 12px;
+  font-weight: bold;
+}
+
+.subPlayerPoints {
+  font-size: 12px;
+}
