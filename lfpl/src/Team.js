@@ -88,21 +88,22 @@ const Team = () => {
     return { top: y, left: x };
   };
 
-  const getLastName = (player) => {
-    const lastName = player.name.split(" ").pop();
+  const getLastName = (x) => {
+    const lastName = x.split(" ").pop();
     return lastName;
   };
 
   const makeCaptain = async (player) => {
     try {
       const token = localStorage.getItem("token");
+      const playerId = player.player?._id || player._id;
       const response = await fetch("/api/team/make-captain", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify({ playerId: player.player._id }),
+        body: JSON.stringify({ playerId }),
       });
 
       if (!response.ok) throw new Error("Failed to set captain");
@@ -117,13 +118,14 @@ const Team = () => {
   const makeSubstitute = async (player) => {
     try {
       const token = localStorage.getItem("token");
+      const playerId = player.player?._id || player._id;
       const response = await fetch("/api/team/substitute", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify({ playerId: player.player._id }),
+        body: JSON.stringify({ playerId }),
       });
 
       if (!response.ok) throw new Error("Failed to make substitute");
@@ -237,15 +239,27 @@ const Team = () => {
                     key={player._id}
                     className={styles.playerMarker}
                     style={{ top: coordinates.top, left: coordinates.left }}
-                    onClick={() => setModalOpenForPlayer(player._id)}
+                    onClick={() =>
+                      setModalOpenForPlayer(
+                        userTeam.players.find(
+                          (p) => p.player._id === player.playerId
+                        )
+                      )
+                    }
                   >
                     <img
                       src={getTeamLogo(player.teamName)}
                       className={styles.teamLogo}
                     />
-                    <div className={styles.playerName}>
-                      {getLastName(player)}
-                    </div>
+                    {player.isCaptain ? (
+                      <div className={styles.playerName}>
+                        {getLastName(player.name)} (C)
+                      </div>
+                    ) : (
+                      <div className={styles.playerName}>
+                        {getLastName(player.name)}
+                      </div>
+                    )}
                     <div className={styles.playerPoints}>{player.points}</div>
                   </div>
                 );
@@ -260,13 +274,15 @@ const Team = () => {
                 <div
                   key={player.player._id}
                   className={styles.subCard}
-                  onClick={() => setModalOpenForPlayer(player.player._id)}
+                  onClick={() => setModalOpenForPlayer(player)}
                 >
                   <img
                     src={getTeamLogo(player.player.teamName)}
                     className={styles.teamLogo}
                   />
-                  <div className={styles.playerName}>{player.player.name}</div>
+                  <div className={styles.playerName}>
+                    {getLastName(player.player.name)}
+                  </div>
                   <div className={styles.playerPoints}>
                     {player.player.points}
                   </div>
@@ -281,29 +297,35 @@ const Team = () => {
       {modalOpenForPlayer && (
         <div className={styles.modalOverlay}>
           <div className={styles.modalContent}>
+            <img
+              src={getTeamLogo(
+                modalOpenForPlayer.player?.teamName ||
+                  modalOpenForPlayer.teamName
+              )}
+              className={styles.teamLogo}
+            />
             <h3>
-              {
-                userTeam?.players.find((p) => p._id === modalOpenForPlayer)
-                  ?.player?.name
-              }
+              {modalOpenForPlayer.player?.name || modalOpenForPlayer.name}
             </h3>
+            {!modalOpenForPlayer.isSubstitute && (
+              <button
+                onClick={() => {
+                  makeCaptain(modalOpenForPlayer);
+
+                  setModalOpenForPlayer(null);
+                }}
+                className={styles.modalButton}
+              >
+                Captain
+              </button>
+            )}
+
             <button
               onClick={() => {
-                makeCaptain(
-                  userTeam.players.find((p) => p._id === modalOpenForPlayer)
-                );
+                makeSubstitute(modalOpenForPlayer);
                 setModalOpenForPlayer(null);
               }}
-            >
-              Make captain
-            </button>
-            <button
-              onClick={() => {
-                makeSubstitute(
-                  userTeam.players.find((p) => p._id === modalOpenForPlayer)
-                );
-                setModalOpenForPlayer(null);
-              }}
+              className={styles.modalButton}
             >
               Sub
             </button>

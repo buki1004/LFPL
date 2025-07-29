@@ -44,6 +44,7 @@ div {
   align-items: center;
   gap: 2rem;
   padding: 0 1rem;
+  margin: 0;
   height: 30px;
 }
 

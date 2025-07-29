@@ -4,6 +4,10 @@
   width: 100%;
 }
 
+.accountList h2 {
+  margin-top: 0;
+}
+
 .teamList {
   list-style-type: none;
 }
@@ -28,6 +32,9 @@
   position: relative;
   min-width: 300px;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
 .closeBtn {
@@ -59,12 +66,17 @@
   transform: translate(-50%, -50%);
   background: none;
   padding: 0;
-  border-radius: 0;
+  border-radius: 10px;
   padding: 4px 6px;
   cursor: pointer;
   font-size: 0.8rem;
   text-align: center;
   font-weight: bold;
+  transition: background-color 0.2s ease-in-out;
+}
+
+.playerMarker:hover {
+  background-color: rgba(240, 248, 255, 0.76);
 }
 
 .teamLogo {
@@ -91,6 +103,7 @@
   color: #000;
   border: none;
   padding: 6px 12px;
+  margin-bottom: 20px;
   border-radius: 4px;
   font-weight: bold;
   cursor: pointer;
@@ -98,6 +111,23 @@
 }
 
 .saveTeam:hover {
+  background-color: #00e07b;
+}
+
+.modalButton {
+  background-color: #00ff85;
+  color: #000;
+  border: none;
+  padding: 6px 12px;
+  border-radius: 4px;
+  margin-bottom: 15px;
+  width: 100px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.2s ease-in-out;
+}
+
+.modalButton:hover {
   background-color: #00e07b;
 }
 
@@ -111,10 +141,14 @@
 
 .subCard {
   cursor: pointer;
-  border-radius: 6px;
+  border-radius: 10px;
   padding: 8px;
   text-align: center;
   width: 80px;
+  transition: background-color 0.2s ease-in-out;
+}
+.subCard:hover {
+  background-color: rgba(240, 248, 255, 0.76);
 }
 
 .subPlayerName {

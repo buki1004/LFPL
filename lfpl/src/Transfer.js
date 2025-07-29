@@ -227,7 +227,7 @@ const Transfers = () => {
                         </>
                       )}
                       <button onClick={() => removeFromTeam(player)}>
-                        Remove
+                        &times;
                       </button>
                     </li>
                   ))}
