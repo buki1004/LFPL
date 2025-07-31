@@ -40,8 +40,26 @@ router.post("/add-player", auth, async (req, res) => {
       Attacker: 0,
     };
 
+    const starterCounts = {
+      Goalkeeper: 0,
+      Defender: 0,
+      Midfielder: 0,
+      Attacker: 0,
+    };
+
+    const positionMinimums = {
+      Goalkeeper: 1,
+      Defender: 3,
+      Midfielder: 3,
+      Attacker: 1,
+    };
+
     team.players.forEach((p) => {
       if (p.player && p.player.position) positionCounts[p.player.position]++;
+    });
+
+    team.players.forEach((p) => {
+      if (p.player && !p.isSubstitute) starterCounts[p.player.position]++;
     });
 
     if (player.position === "Goalkeeper" && positionCounts.Goalkeeper >= 2)
@@ -59,20 +77,46 @@ router.post("/add-player", auth, async (req, res) => {
       { upsert: true, new: true }
     );
 
-    team = await Team.findOneAndUpdate(
-      { owner: req.user._id },
-      {
-        $push: {
-          players: {
-            player: playerDoc._id,
-            isSubstitute: true,
-            isCaptain: false,
+    if (
+      (player.position === "Goalkeeper" &&
+        starterCounts.Goalkeeper < positionMinimums.Goalkeeper) ||
+      (player.position === "Defender" &&
+        starterCounts.Defender < positionMinimums.Defender) ||
+      (player.position === "Midfielder" &&
+        starterCounts.Midfielder < positionMinimums.Midfielder) ||
+      (player.position === "Attacker" &&
+        starterCounts.Attacker < positionMinimums.Attacker)
+    ) {
+      team = await Team.findOneAndUpdate(
+        { owner: req.user._id },
+        {
+          $push: {
+            players: {
+              player: playerDoc._id,
+              isSubstitute: false,
+              isCaptain: false,
+            },
           },
+          $inc: { budget: -player.price },
         },
-        $inc: { budget: -player.price },
-      },
-      { new: true }
-    ).populate("players.player");
+        { new: true }
+      ).populate("players.player");
+    } else {
+      team = await Team.findOneAndUpdate(
+        { owner: req.user._id },
+        {
+          $push: {
+            players: {
+              player: playerDoc._id,
+              isSubstitute: true,
+              isCaptain: false,
+            },
+          },
+          $inc: { budget: -player.price },
+        },
+        { new: true }
+      ).populate("players.player");
+    }
 
     if (!team) return res.status(404).json({ error: "Team not found " });
 

@@ -1,0 +1,306 @@
+.layoutContainer {
+  display: flex;
+  align-items: flex-start;
+}
+
+.accountList {
+  text-align: center;
+  height: 100%;
+  width: 50%;
+  float: left;
+}
+
+.accountList h2 {
+  margin-top: 0;
+}
+
+.teamList {
+  list-style-type: none;
+}
+
+.modalOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.modalContent {
+  background: white;
+  padding: 2rem;
+  border-radius: 8px;
+  position: relative;
+  min-width: 300px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.closeBtn {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  cursor: pointer;
+}
+
+.pitchContainer {
+  position: relative;
+  width: 600px;
+  height: 780px;
+  margin: 0 auto;
+  margin-bottom: 3rem;
+}
+
+.pitchImage {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+.playerMarker {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  background: none;
+  padding: 0;
+  border-radius: 10px;
+  padding: 4px 6px;
+  cursor: pointer;
+  font-size: 0.8rem;
+  text-align: center;
+  font-weight: bold;
+  transition: background-color 0.2s ease-in-out;
+}
+
+.playerMarker:hover {
+  background-color: rgba(240, 248, 255, 0.76);
+}
+
+.teamLogo {
+  width: 40px;
+  height: 40px;
+  object-fit: contain;
+  display: block;
+  margin: 0 auto 4px;
+}
+
+.playerName {
+  background-color: white;
+  border-radius: 3px 3px 0px 0px;
+  width: 80px;
+}
+
+.playerPoints {
+  background-color: gainsboro;
+  border-radius: 0px 0px 3px 3px;
+}
+
+.saveTeam {
+  background-color: #00ff85;
+  color: #000;
+  border: none;
+  padding: 6px 12px;
+  margin-bottom: 20px;
+  border-radius: 4px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.2s ease-in-out;
+}
+
+.saveTeam:hover {
+  background-color: #00e07b;
+}
+
+.modalButton {
+  background-color: #00ff85;
+  color: #000;
+  border: none;
+  padding: 6px 12px;
+  border-radius: 4px;
+  margin-bottom: 15px;
+  width: 100px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.2s ease-in-out;
+}
+
+.modalButton:hover {
+  background-color: #00e07b;
+}
+
+.subContainer {
+  display: flex;
+  justify-content: center;
+  gap: 16px;
+  flex-wrap: wrap;
+  margin-top: 16px;
+}
+
+.subCard {
+  cursor: pointer;
+  border-radius: 10px;
+  padding: 8px;
+  text-align: center;
+  width: 80px;
+  transition: background-color 0.2s ease-in-out;
+}
+.subCard:hover {
+  background-color: rgba(240, 248, 255, 0.76);
+}
+
+.subPlayerName {
+  font-size: 12px;
+  font-weight: bold;
+}
+
+.subPlayerPoints {
+  font-size: 12px;
+}
+
+.playerList {
+  text-align: center;
+  height: 100%;
+  width: 50%;
+  float: left;
+  padding: 20px;
+  max-width: 500px;
+  margin-left: auto;
+  margin-right: auto;
+  margin-top: 0;
+  margin-bottom: 0;
+}
+
+.playerList h1 {
+  margin-top: 0;
+}
+
+.dropdown {
+  position: relative;
+  display: inline-block;
+  margin-bottom: 10px;
+  font-size: 14px;
+}
+
+.dropdownHeader {
+  padding: 8px 12px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  background-color: white;
+  cursor: pointer;
+  font-weight: 500;
+  text-align: left;
+}
+
+.dropdownList {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  z-index: 1000;
+  background-color: white;
+  border: 1px solid #ccc;
+  border-top: none;
+  border-radius: 0 0 6px 6px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+  width: 100%;
+}
+
+.dropdownItem {
+  padding: 8px 12px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.dropdownItem:hover {
+  background-color: #f2f2f2;
+}
+
+.searchInput {
+  width: 100%;
+  padding: 10px 14px;
+  margin-bottom: 20px;
+  font-size: 16px;
+  border: 1px solid #ccc;
+  border-radius: 25px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+}
+
+.filterDropdown {
+  padding: 6px 12px;
+  margin: 10px 0;
+  font-size: 14px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+}
+
+.playerCardList {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.playerCard {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border: 1px solid #e2e2e2;
+  border-radius: 12px;
+  padding: 10px 15px;
+  background-color: white;
+  transition: background 0.2s;
+}
+
+.playerCard:hover {
+  background-color: #f7f7f7;
+}
+
+.disabledCard {
+  opacity: 0.5;
+  pointer-events: none;
+  filter: grayscale(100%);
+}
+
+.clubLogo {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  object-fit: cover;
+  background-color: #fff;
+  border: 1px solid #ddd;
+}
+
+.playerInfo {
+  display: flex;
+  flex-direction: column;
+  text-align: left;
+}
+
+.playerMeta {
+  font-size: 14px;
+  color: #666;
+  margin-top: 4px;
+}
+
+.addButton {
+  background-color: #00ff85;
+  color: #000;
+  border: none;
+  padding: 6px 12px;
+  border-radius: 8px;
+  font-weight: bold;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.addButton:hover {
+  background-color: #00e07b;
+}

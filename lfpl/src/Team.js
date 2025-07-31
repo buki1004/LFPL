@@ -33,6 +33,11 @@ const Team = () => {
     return logos[teamName];
   };
 
+  const getLastName = (x) => {
+    const lastName = x.split(" ").pop();
+    return lastName;
+  };
+
   const groupAndSortPlayers = (players = []) => {
     const positionOrder = {
       Goalkeeper: 0,
@@ -86,11 +91,6 @@ const Team = () => {
     const x = `${spacing * (index + 1)}%`;
 
     return { top: y, left: x };
-  };
-
-  const getLastName = (x) => {
-    const lastName = x.split(" ").pop();
-    return lastName;
   };
 
   const makeCaptain = async (player) => {

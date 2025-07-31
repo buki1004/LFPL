@@ -35,7 +35,7 @@ router.post("/signup", async (req, res) => {
     const token = jwt.sign(
       { _id: user._id, email: user.email },
       "your-secret-key",
-      { expiresIn: "1h" }
+      { expiresIn: "4h" }
     );
 
     res.status(201).json({
@@ -55,7 +55,7 @@ router.post("/login", async (req, res) => {
     if (!user) return res.status(401).json({ error: "Invalid credentials" });
 
     const token = jwt.sign({ _id: user._id }, "your-secret-key", {
-      expiresIn: "1h",
+      expiresIn: "4h",
     });
 
     res.json({
@@ -70,45 +70,6 @@ router.post("/login", async (req, res) => {
 
 router.post("/logout", async (req, res) => {
   res.status(200).json({ message: "Logged out successfully" });
-});
-
-router.post("/", async (req, res) => {
-  try {
-    const { userId, players, budget } = req.body;
-    const team = new Team({
-      players: players.map((p) => ({
-        id: p.player.id,
-        name: p.player.name,
-        position: p.statistics[0].games.position,
-        price: p.player.price,
-        points: p.player.points,
-        teamName: p.statistics[0].team.name,
-        statistics: {
-          appearances: p.statistics[0].games.appearances,
-          minutes: p.statistics[0].games.minutes,
-          conceded: p.statistics[0].goals.conceded,
-          saves: p.statistics[0].goals.saves,
-          tackles: p.statistics[0].tackles.total,
-          interceptions: p.statistics[0].tackles.interceptions,
-          duels: p.statistics[0].duels.total,
-          duelsWon: p.statistics[0].duels.won,
-          passes: p.statistics[0].passes.total,
-          keyPasses: p.statistics[0].passes.key,
-          assists: p.statistics[0].goals.assists,
-          goals: p.statistics[0].goals.total,
-          yellows: p.statistics[0].cards.yellow,
-          reds: p.statistics[0].cards.red,
-        },
-      })),
-      owner: userId,
-      budget: budget,
-    });
-
-    await team.save();
-    res.status(201).json(team);
-  } catch (error) {
-    res.status(500).json({ error: error.message });
-  }
 });
 
 router.get("/:userId", async (req, res) => {
