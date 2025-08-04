@@ -1,0 +1,38 @@
+.container {
+  display: flex;
+  gap: 2rem;
+  padding: 2rem;
+}
+
+.left,
+.right {
+  flex: 1;
+  border: 1px solid #ccc;
+  border-radius: 12px;
+  padding: 1.5rem;
+  background: #f9f9f9;
+}
+
+.leagueInput {
+  display: block;
+  margin: 0.5rem 0 1rem;
+  padding: 0.5rem;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.leagueBtn {
+  background-color: #00ff85;
+  color: #000;
+  border: none;
+  padding: 6px 12px;
+  margin-bottom: 20px;
+  border-radius: 4px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.2s ease-in-out;
+}
+
+.leagueBtn:hover {
+  background-color: #00e07b;
+}

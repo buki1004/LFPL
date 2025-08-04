@@ -9,6 +9,7 @@ import CreateTeam from "./CreateTeam";
 import Team from "./Team";
 import Transfers from "./Transfer";
 import Navbar from "./Navbar";
+import League from "./League";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
@@ -26,6 +27,7 @@ root.render(
       <Route path="/createteam" element={<CreateTeam />} />
       <Route path="/team" element={<Team />} />
       <Route path="/transfers" element={<Transfers />} />
+      <Route path="/league" element={<League />} />
     </Routes>
   </BrowserRouter>
 );

@@ -16,6 +16,9 @@ export default function Navbar() {
       <a href="/transfers" className="transfers">
         Transfers
       </a>
+      <a href="/league" className="league">
+        Leagues
+      </a>
     </nav>
   );
 }

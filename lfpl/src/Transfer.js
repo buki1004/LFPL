@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import styles from "./Transfer.module.css";
 import { useNavigate } from "react-router-dom";
 import pitch from "./images/pitch.png";
+import sans from "./images/sans.png";
 
 const Transfers = () => {
   const [backendData, setBackendData] = useState({ response: [] });
@@ -41,7 +42,7 @@ const Transfers = () => {
   };
 
   const getTeamLogo = (teamName) => {
-    return logos[teamName];
+    return logos[teamName] || sans;
   };
 
   const getLastName = (x) => {

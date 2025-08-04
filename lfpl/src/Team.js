@@ -6,6 +6,7 @@ import pitch from "./images/pitch.png";
 const Team = () => {
   const [userTeam, setUserTeam] = useState(null);
   const [userPoints, setUserPoints] = useState(0);
+  const [totalPoints, setTotalPoints] = useState(0);
   const [modalOpenForPlayer, setModalOpenForPlayer] = useState(null);
   const navigate = useNavigate();
 
@@ -205,7 +206,8 @@ const Team = () => {
         ]);
 
         setUserTeam(teamData);
-        setUserPoints(pointsData);
+        setUserPoints(pointsData.gameweekPoints);
+        setTotalPoints(pointsData.totalPoints);
       } catch (error) {
         console.error("Fetch failed:", error);
       }
@@ -215,129 +217,134 @@ const Team = () => {
   }, []);
 
   return (
-    <div className={styles.accountList}>
-      {userTeam ? (
-        <div>
-          <h2>Your points: {userPoints}</h2>
-          <button className={styles.saveTeam} onClick={() => saveTeam()}>
-            Save team
-          </button>
-          <h2>Starters</h2>
-          <div className={styles.pitchContainer}>
-            <img src={pitch} className={styles.pitchImage} />
-            {groupAndSortPlayers(
-              userTeam.players.filter((p) => !p.isSubstitute)
-            ).flatMap(([position, players], i) =>
-              players.map((player, idx) => {
-                const coordinates = getPlayerCoordinates(
-                  position,
-                  idx,
-                  players.length
-                );
-                return (
-                  <div
-                    key={player._id}
-                    className={styles.playerMarker}
-                    style={{ top: coordinates.top, left: coordinates.left }}
-                    onClick={() =>
-                      setModalOpenForPlayer(
-                        userTeam.players.find(
-                          (p) => p.player._id === player.playerId
+    <div className={styles.layoutContainer}>
+      <div className={styles.accountList}>
+        <h1>My Team</h1>
+        {userTeam ? (
+          <div>
+            <h2>
+              GW points: {userPoints} Total points: {totalPoints}
+            </h2>
+            <button className={styles.saveTeam} onClick={() => saveTeam()}>
+              Save team
+            </button>
+            <h2>Starters</h2>
+            <div className={styles.pitchContainer}>
+              <img src={pitch} className={styles.pitchImage} />
+              {groupAndSortPlayers(
+                userTeam.players.filter((p) => !p.isSubstitute)
+              ).flatMap(([position, players], i) =>
+                players.map((player, idx) => {
+                  const coordinates = getPlayerCoordinates(
+                    position,
+                    idx,
+                    players.length
+                  );
+                  return (
+                    <div
+                      key={player._id}
+                      className={styles.playerMarker}
+                      style={{ top: coordinates.top, left: coordinates.left }}
+                      onClick={() =>
+                        setModalOpenForPlayer(
+                          userTeam.players.find(
+                            (p) => p.player._id === player.playerId
+                          )
                         )
-                      )
-                    }
+                      }
+                    >
+                      <img
+                        src={getTeamLogo(player.teamName)}
+                        className={styles.teamLogo}
+                      />
+                      {player.isCaptain ? (
+                        <div className={styles.playerName}>
+                          {getLastName(player.name)} (C)
+                        </div>
+                      ) : (
+                        <div className={styles.playerName}>
+                          {getLastName(player.name)}
+                        </div>
+                      )}
+                      <div className={styles.playerPoints}>{player.points}</div>
+                    </div>
+                  );
+                })
+              )}
+            </div>
+            <h2>Substitutes</h2>
+            <div className={styles.subContainer}>
+              {userTeam.players
+                .filter((p) => p.isSubstitute)
+                .map((player) => (
+                  <div
+                    key={player.player._id}
+                    className={styles.subCard}
+                    onClick={() => setModalOpenForPlayer(player)}
                   >
                     <img
-                      src={getTeamLogo(player.teamName)}
+                      src={getTeamLogo(player.player.teamName)}
                       className={styles.teamLogo}
                     />
-                    {player.isCaptain ? (
-                      <div className={styles.playerName}>
-                        {getLastName(player.name)} (C)
-                      </div>
-                    ) : (
-                      <div className={styles.playerName}>
-                        {getLastName(player.name)}
-                      </div>
-                    )}
-                    <div className={styles.playerPoints}>{player.points}</div>
+                    <div className={styles.playerName}>
+                      {getLastName(player.player.name)}
+                    </div>
+                    <div className={styles.playerPoints}>
+                      {player.player.points}
+                    </div>
+                    <div>{player.player.position.substring(0, 3)}</div>
                   </div>
-                );
-              })
-            )}
+                ))}
+            </div>
           </div>
-          <h2>Substitutes</h2>
-          <div className={styles.subContainer}>
-            {userTeam.players
-              .filter((p) => p.isSubstitute)
-              .map((player) => (
-                <div
-                  key={player.player._id}
-                  className={styles.subCard}
-                  onClick={() => setModalOpenForPlayer(player)}
+        ) : (
+          <p>No team yet! Add players above.</p>
+        )}
+        {modalOpenForPlayer && (
+          <div className={styles.modalOverlay}>
+            <div className={styles.modalContent}>
+              <img
+                src={getTeamLogo(
+                  modalOpenForPlayer.player?.teamName ||
+                    modalOpenForPlayer.teamName
+                )}
+                className={styles.teamLogo}
+              />
+              <h3>
+                {modalOpenForPlayer.player?.name || modalOpenForPlayer.name}
+              </h3>
+              {!modalOpenForPlayer.isSubstitute && (
+                <button
+                  onClick={() => {
+                    makeCaptain(modalOpenForPlayer);
+
+                    setModalOpenForPlayer(null);
+                  }}
+                  className={styles.modalButton}
                 >
-                  <img
-                    src={getTeamLogo(player.player.teamName)}
-                    className={styles.teamLogo}
-                  />
-                  <div className={styles.playerName}>
-                    {getLastName(player.player.name)}
-                  </div>
-                  <div className={styles.playerPoints}>
-                    {player.player.points}
-                  </div>
-                  <div>{player.player.position.substring(0, 3)}</div>
-                </div>
-              ))}
-          </div>
-        </div>
-      ) : (
-        <p>No team yet! Add players above.</p>
-      )}
-      {modalOpenForPlayer && (
-        <div className={styles.modalOverlay}>
-          <div className={styles.modalContent}>
-            <img
-              src={getTeamLogo(
-                modalOpenForPlayer.player?.teamName ||
-                  modalOpenForPlayer.teamName
+                  Captain
+                </button>
               )}
-              className={styles.teamLogo}
-            />
-            <h3>
-              {modalOpenForPlayer.player?.name || modalOpenForPlayer.name}
-            </h3>
-            {!modalOpenForPlayer.isSubstitute && (
+
               <button
                 onClick={() => {
-                  makeCaptain(modalOpenForPlayer);
-
+                  makeSubstitute(modalOpenForPlayer);
                   setModalOpenForPlayer(null);
                 }}
                 className={styles.modalButton}
               >
-                Captain
+                Sub
               </button>
-            )}
-
-            <button
-              onClick={() => {
-                makeSubstitute(modalOpenForPlayer);
-                setModalOpenForPlayer(null);
-              }}
-              className={styles.modalButton}
-            >
-              Sub
-            </button>
-            <button
-              className={styles.closeBtn}
-              onClick={() => setModalOpenForPlayer(null)}
-            >
-              &times;
-            </button>
+              <button
+                className={styles.closeBtn}
+                onClick={() => setModalOpenForPlayer(null)}
+              >
+                &times;
+              </button>
+            </div>
           </div>
-        </div>
-      )}
+        )}
+      </div>
     </div>
   );
 };

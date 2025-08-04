@@ -29,7 +29,10 @@ router.post("/pointsTest", auth, async (req, res) => {
       return {
         updateOne: {
           filter: { _id: team._id },
-          update: { $set: { points: totalPoints } },
+          update: {
+            $set: { gameweekPoints: totalPoints },
+            $inc: { totalPoints: totalPoints },
+          },
         },
       };
     });
@@ -37,7 +40,10 @@ router.post("/pointsTest", auth, async (req, res) => {
     await Team.bulkWrite(teamUpdates);
 
     const userTeam = await Team.findOne({ owner: req.user._id });
-    res.json(userTeam.points);
+    res.json({
+      gameweekPoints: userTeam.gameweekPoints,
+      totalPoints: userTeam.totalPoints,
+    });
   } catch (error) {
     console.error("Points simulation error: ", error);
     res.status(500).json(0);
@@ -47,8 +53,9 @@ router.post("/pointsTest", auth, async (req, res) => {
 router.post("/fetchPoints", auth, async (req, res) => {
   try {
     const team = await Team.findOne({ owner: req.user._id });
-    const points = team.points;
-    res.json(points);
+    const points = team.gameweekPoints;
+    const totalPoints = team.totalPoints;
+    res.json({ gameweekPoints: points, totalPoints: totalPoints });
   } catch (error) {
     console.error("Error fetching points: ", error);
     res.status(500).json(0);

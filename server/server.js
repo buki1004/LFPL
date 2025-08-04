@@ -3,6 +3,7 @@ const mongoose = require("mongoose");
 const authRoutes = require("./authRoutes");
 const teamRoutes = require("./teamRoutes");
 const pointsTest = require("./pointsTest");
+const leagueRoutes = require("./leagueRoutes");
 const cors = require("cors");
 const fs = require("fs");
 const path = require("path");
@@ -24,9 +25,11 @@ mongoose
 require("./models/User");
 require("./models/Player");
 require("./models/Team");
+require("./models/League");
 
 app.use("/api/auth", authRoutes);
 app.use("/api/team", teamRoutes);
+app.use("/api/league", leagueRoutes);
 app.use("/api", pointsTest);
 
 function randomPrice(min, max) {

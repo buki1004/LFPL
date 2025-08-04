@@ -7,6 +7,7 @@ const App = () => {
   const [query, setQuery] = useState("");
   const [userTeam, setUserTeam] = useState(null);
   const [userPoints, setUserPoints] = useState(0);
+  const [totalPoints, setTotalPoints] = useState(0);
   const [modalOpenForPlayer, setModalOpenForPlayer] = useState(null);
   const navigate = useNavigate();
 
@@ -106,8 +107,9 @@ const App = () => {
           Authorization: `Bearer ${token}`,
         },
       });
-      const points = await response.json();
-      setUserPoints(points);
+      const data = await response.json();
+      setUserPoints(data.gameweekPoints);
+      setTotalPoints(data.totalPoints);
     } catch (error) {
       console.error("Simulation failed: ", error);
     }
@@ -264,7 +266,8 @@ const App = () => {
         ]);
 
         setUserTeam(teamData);
-        setUserPoints(pointsData);
+        setUserPoints(pointsData.gameweekPoints);
+        setTotalPoints(pointsData.totalPoints);
       } catch (error) {
         console.error("Fetch failed:", error);
       }
@@ -299,7 +302,9 @@ const App = () => {
         <button onClick={() => handleLogout()}>Logout</button>
         {userTeam ? (
           <div>
-            <h2>Your points: {userPoints}</h2>
+            <h2>
+              GW points: {userPoints} Total points: {totalPoints}
+            </h2>
             <button onClick={() => simulatePoints()}>Simulate</button>
             <h2>
               Your budget: {parseFloat((userTeam.budget / 100).toFixed(2))}
