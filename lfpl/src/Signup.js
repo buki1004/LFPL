@@ -2,6 +2,7 @@ import React, { useState } from "react";
 
 const Signup = () => {
   const [email, setEmail] = useState("");
+  const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
 
   const handleSignup = async (e) => {
@@ -10,9 +11,8 @@ const Signup = () => {
       const response = await fetch("/api/auth/signup", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password }),
+        body: JSON.stringify({ email, username, password }),
       });
-      /*const { message, token, userId } = await response.json();*/
       const data = await response.json();
       if (!response.ok) {
         localStorage.clear();
@@ -36,11 +36,19 @@ const Signup = () => {
         <input
           type="email"
           value={email}
+          placeholder="email"
           onChange={(e) => setEmail(e.target.value)}
+        />
+        <input
+          type="username"
+          value={username}
+          placeholder="username"
+          onChange={(e) => setUsername(e.target.value)}
         />
         <input
           type="password"
           value={password}
+          placeholder="password"
           onChange={(e) => setPassword(e.target.value)}
         />
         <button type="submit" onClick={handleSignup}>

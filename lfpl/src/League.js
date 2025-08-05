@@ -8,49 +8,8 @@ const League = () => {
   const [userLeagues, setUserLeagues] = useState([]);
   const [newLeagueName, setNewLeagueName] = useState("");
   const [joinCode, setJoinCode] = useState("");
+  const [showCode, setShowCode] = useState({});
   const navigate = useNavigate();
-
-  useEffect(() => {
-    const token = localStorage.getItem("token");
-    if (!token) {
-      navigate("/login");
-    }
-  }, [navigate]);
-
-  useEffect(() => {
-    const fetchData = async () => {
-      const token = localStorage.getItem("token");
-      if (!token) return;
-
-      try {
-        const [teamResponse, pointsResponse] = await Promise.all([
-          fetch("/api/team/my-team", {
-            headers: { Authorization: `Bearer ${token}` },
-          }),
-          fetch("/api/fetchPoints", {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: `Bearer ${token}`,
-            },
-          }),
-        ]);
-
-        const [teamData, pointsData] = await Promise.all([
-          teamResponse.json(),
-          pointsResponse.json(),
-        ]);
-
-        setUserTeam(teamData);
-        setTotalPoints(pointsData.totalPoints);
-      } catch (error) {
-        console.error("Fetch failed:", error);
-      }
-    };
-
-    fetchData();
-    fetchUserLeagues();
-  }, []);
 
   const fetchUserLeagues = async () => {
     try {
@@ -114,6 +73,55 @@ const League = () => {
     }
   };
 
+  const toggleCode = (leagueId) => {
+    setShowCode((prev) => ({
+      ...prev,
+      [leagueId]: !prev[leagueId],
+    }));
+  };
+
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (!token) {
+      navigate("/login");
+    }
+  }, [navigate]);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      const token = localStorage.getItem("token");
+      if (!token) return;
+
+      try {
+        const [teamResponse, pointsResponse] = await Promise.all([
+          fetch("/api/team/my-team", {
+            headers: { Authorization: `Bearer ${token}` },
+          }),
+          fetch("/api/fetchPoints", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`,
+            },
+          }),
+        ]);
+
+        const [teamData, pointsData] = await Promise.all([
+          teamResponse.json(),
+          pointsResponse.json(),
+        ]);
+
+        setUserTeam(teamData);
+        setTotalPoints(pointsData.totalPoints);
+      } catch (error) {
+        console.error("Fetch failed:", error);
+      }
+    };
+
+    fetchData();
+    fetchUserLeagues();
+  }, []);
+
   return (
     <div className={styles.container}>
       <div className={styles.left}>
@@ -149,13 +157,25 @@ const League = () => {
           <ul>
             {userLeagues.map((league) => (
               <li key={league._id} className={styles.leagueItem}>
-                <strong>{league.name}</strong>
-                <br />
-                <span>Code: {league.code}</span>
-                <br />
-                <div style={{ marginTop: "10px", textAlign: "left" }}>
+                <div className={styles.leagueHeader}>
+                  <strong>{league.name}</strong>
+                  {userTeam?.owner === league.createdBy._id && (
+                    <button
+                      className={styles.leagueBtn}
+                      onClick={() => toggleCode(league._id)}
+                    >
+                      Code
+                    </button>
+                  )}
+                </div>
+
+                {showCode[league._id] && (
+                  <div className={styles.leagueCode}>Code: {league.code}</div>
+                )}
+
+                <div className={styles.standings}>
                   <strong>Standings:</strong>
-                  <ol style={{ paddingLeft: "1.5rem", marginTop: "5px" }}>
+                  <ol>
                     {league.members.map((member, idx) => (
                       <li key={member.user._id || idx}>
                         {member.user?.username || "Unknown"} —{" "}

@@ -27,12 +27,46 @@
   border: none;
   padding: 6px 12px;
   margin-bottom: 20px;
-  border-radius: 4px;
+  border-radius: 12px;
   font-weight: bold;
   cursor: pointer;
   transition: background-color 0.2s ease-in-out;
+  transition: scale 0.15s;
 }
 
 .leagueBtn:hover {
   background-color: #00e07b;
+}
+
+.leagueBtn:active {
+  scale: 0.97;
+}
+
+.leagueItem {
+  list-style: none;
+  margin-bottom: 2rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid #ddd;
+}
+
+.leagueHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.leagueCode {
+  margin-top: 0.5rem;
+  font-style: italic;
+  color: #333;
+}
+
+.standings {
+  margin-top: 10px;
+  text-align: left;
+}
+
+.standings ol {
+  padding-left: 1.5rem;
+  margin-top: 5px;
 }

@@ -11,9 +11,11 @@ router.get("/signup", (req, res) => {
 
 router.post("/signup", async (req, res) => {
   try {
-    const { email, password } = req.body;
+    const { email, username, password } = req.body;
 
-    const existingUser = await User.findOne({ email }).select("_id");
+    const existingUser = await User.findOne({
+      $or: [{ email }, { username }],
+    }).select("_id");
     if (existingUser) {
       return res
         .status(400)
@@ -21,9 +23,9 @@ router.post("/signup", async (req, res) => {
     }
 
     const hashedPassword = await bcrypt.hash(password, 12);
-    const user = new User({ email, password: hashedPassword });
+    const user = new User({ email, username, password: hashedPassword });
     const team = new Team({
-      name: `${email}'s Team`,
+      name: `${username}'s Team`,
       players: [],
       owner: user._id,
     });

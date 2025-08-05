@@ -7,6 +7,8 @@ const Team = () => {
   const [userTeam, setUserTeam] = useState(null);
   const [userPoints, setUserPoints] = useState(0);
   const [totalPoints, setTotalPoints] = useState(0);
+  const [userLeagues, setUserLeagues] = useState([]);
+  const [showCode, setShowCode] = useState({});
   const [modalOpenForPlayer, setModalOpenForPlayer] = useState(null);
   const navigate = useNavigate();
 
@@ -139,6 +141,29 @@ const Team = () => {
     }
   };
 
+  const fetchUserLeagues = async () => {
+    try {
+      const token = localStorage.getItem("token");
+      const response = await fetch("/api/league/my-leagues", {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      const leagues = await response.json();
+      setUserLeagues(leagues);
+    } catch (error) {
+      console.error("Failed to fetch leagues:", error);
+    }
+  };
+
+  const toggleCode = (leagueId) => {
+    setShowCode((prev) => ({
+      ...prev,
+      [leagueId]: !prev[leagueId],
+    }));
+  };
+
   const saveTeam = () => {
     const positions = {
       Goalkeeper: 0,
@@ -214,6 +239,7 @@ const Team = () => {
     };
 
     fetchData();
+    fetchUserLeagues();
   }, []);
 
   return (
@@ -343,6 +369,46 @@ const Team = () => {
               </button>
             </div>
           </div>
+        )}
+      </div>
+      <div className={styles.leagueList}>
+        <h2>Your Leagues</h2>
+        {userLeagues.length === 0 ? (
+          <p>You are not in any leagues yet.</p>
+        ) : (
+          <ul>
+            {userLeagues.map((league) => (
+              <li key={league._id} className={styles.leagueItem}>
+                <div className={styles.leagueHeader}>
+                  <strong>{league.name}</strong>
+                  {userTeam?.owner === league.createdBy._id && (
+                    <button
+                      className={styles.saveTeam}
+                      onClick={() => toggleCode(league._id)}
+                    >
+                      Code
+                    </button>
+                  )}
+                </div>
+
+                {showCode[league._id] && (
+                  <div className={styles.leagueCode}>Code: {league.code}</div>
+                )}
+
+                <div className={styles.standings}>
+                  <strong>Standings:</strong>
+                  <ol>
+                    {league.members.map((member, idx) => (
+                      <li key={member.user._id || idx}>
+                        {member.user?.username || "Unknown"} —{" "}
+                        {member.team?.totalPoints ?? 0} pts
+                      </li>
+                    ))}
+                  </ol>
+                </div>
+              </li>
+            ))}
+          </ul>
         )}
       </div>
     </div>

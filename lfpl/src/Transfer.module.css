@@ -108,33 +108,43 @@
   background-color: #00ff85;
   color: #000;
   border: none;
-  padding: 6px 12px;
+  padding: 8px 12px;
   margin-bottom: 20px;
-  border-radius: 4px;
+  border-radius: 12px;
   font-weight: bold;
   cursor: pointer;
   transition: background-color 0.2s ease-in-out;
+  transition: scale 0.15s;
 }
 
 .saveTeam:hover {
   background-color: #00e07b;
 }
 
+.saveTeam:active {
+  scale: 0.97;
+}
+
 .modalButton {
   background-color: #00ff85;
   color: #000;
   border: none;
-  padding: 6px 12px;
-  border-radius: 4px;
+  padding: 8px 12px;
+  border-radius: 12px;
   margin-bottom: 15px;
   width: 100px;
   font-weight: bold;
   cursor: pointer;
   transition: background-color 0.2s ease-in-out;
+  transition: scale 0.15s;
 }
 
 .modalButton:hover {
   background-color: #00e07b;
+}
+
+.modalButton:active {
+  scale: 0.97;
 }
 
 .subContainer {
@@ -294,13 +304,18 @@
   color: #000;
   border: none;
   padding: 6px 12px;
-  border-radius: 8px;
+  border-radius: 10px;
   font-weight: bold;
   font-size: 16px;
   cursor: pointer;
   transition: background-color 0.2s;
+  transition: scale 0.15s;
 }
 
 .addButton:hover {
   background-color: #00e07b;
+}
+
+.addButton:active {
+  scale: 0.97;
 }
