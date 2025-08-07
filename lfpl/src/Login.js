@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import styles from "./Signup.module.css";
 
 const Login = () => {
   const [email, setEmail] = useState("");
@@ -36,8 +37,8 @@ const Login = () => {
   useEffect(() => {}, []);
 
   return (
-    <div className="login-container">
-      <form action={handleLogin}>
+    <div className={styles.formContainer}>
+      <form action={handleLogin} className={styles.signupForm}>
         <h2>Login</h2>
         <input
           type="email"
@@ -56,8 +57,8 @@ const Login = () => {
         <button type="submit" onClick={handleLogin}>
           Login
         </button>
+        <a href="/signup">Don't have an account? Click here to signup</a>
       </form>
-      <a href="/signup">Don't have an account? Click here to signup</a>
     </div>
   );
 };

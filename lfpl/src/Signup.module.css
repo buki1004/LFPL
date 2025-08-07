@@ -1,0 +1,67 @@
+.formContainer {
+  gap: 2rem;
+  padding: 2rem;
+  width: 50%;
+  margin: auto;
+}
+
+.signupForm {
+  display: flex;
+  flex-direction: column;
+  border: 1px solid #ccc;
+  border-radius: 12px;
+  padding: 1.5rem;
+  background: #f9f9f9;
+  text-align: center;
+}
+
+input {
+  font-size: 1rem;
+  padding: 0.5rem;
+  text-align: left;
+  box-sizing: border-box;
+  width: 20%;
+  margin: auto;
+  margin-bottom: 1rem;
+}
+
+button {
+  background-color: #00ff85;
+  color: #000;
+  border: none;
+  width: 10%;
+  padding: 6px 12px;
+  margin: auto;
+  margin-bottom: 1rem;
+  border-radius: 12px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.2s ease-in-out;
+  transition: scale 0.15s;
+}
+
+button:hover {
+  background-color: #00e07b;
+}
+
+button:active {
+  scale: 0.97;
+}
+
+a {
+  text-decoration: none;
+  background-color: none;
+  color: #000;
+  border: 1px solid transparent;
+  padding: 6px 12px;
+  margin: auto;
+  margin-bottom: 1rem;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: background-color 0.2s ease-in-out, border 0.2s ease-in-out;
+}
+
+a:hover {
+  background-color: #f0f0f0;
+  border: 1px solid #ccc;
+}

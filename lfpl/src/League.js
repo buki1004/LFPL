@@ -80,6 +80,11 @@ const League = () => {
     }));
   };
 
+  const copyCode = (s) => {
+    navigator.clipboard.writeText(s);
+    alert("League code copied to clipboard!");
+  };
+
   useEffect(() => {
     const token = localStorage.getItem("token");
     if (!token) {
@@ -162,7 +167,7 @@ const League = () => {
                   {userTeam?.owner === league.createdBy._id && (
                     <button
                       className={styles.leagueBtn}
-                      onClick={() => toggleCode(league._id)}
+                      onClick={() => copyCode(league.code)}
                     >
                       Code
                     </button>
