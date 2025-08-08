@@ -46,6 +46,7 @@ const Login = () => {
           onChange={(e) => setEmail(e.target.value)}
           placeholder="Email"
           required
+          className={styles.signupInput}
         />
         <input
           type="password"
@@ -53,11 +54,18 @@ const Login = () => {
           onChange={(e) => setPassword(e.target.value)}
           placeholder="Password"
           required
+          className={styles.signupInput}
         />
-        <button type="submit" onClick={handleLogin}>
+        <button
+          type="submit"
+          onClick={handleLogin}
+          className={styles.signupButton}
+        >
           Login
         </button>
-        <a href="/signup">Don't have an account? Click here to signup</a>
+        <a href="/signup" className={styles.signupAnchor}>
+          Don't have an account? Click here to signup
+        </a>
       </form>
     </div>
   );

@@ -1,0 +1,91 @@
+body.dark-mode {
+  background-color: #38343c !important;
+  color: #f0f0f0 !important;
+}
+
+body.dark-mode [class*="playerCard"],
+body.dark-mode [class*="dropdownHeader"],
+body.dark-mode [class*="dropdownList"],
+body.dark-mode [class*="modalContent"],
+body.dark-mode [class*="playerName"],
+body.dark-mode [class*="subCard"],
+body.dark-mode [class*="dropdownItem"] {
+  background-color: #4a4650 !important;
+  color: #ffffff !important;
+  border-color: #5a5560 !important;
+}
+
+body.dark-mode [class*="playerPoints"] {
+  background-color: #38343c;
+}
+
+body.dark-mode [class*="playerMeta"] {
+  color: #ffffff !important;
+}
+
+body.dark-mode [class*="subCard"],
+body.dark-mode [class*="subCard"] {
+  transition: none !important;
+  animation: none !important;
+}
+
+body.dark-mode [class*="playerCard"]:hover,
+body.dark-mode [class*="dropdownItem"]:hover,
+body.dark-mode [class*="subCard"]:hover,
+body.dark-mode [class*="subCard"]:hover [class*="playerName"] {
+  background-color: #5a5560 !important;
+  transition: none !important;
+}
+
+body.dark-mode [class*="playerCard"]:hover {
+  background-color: #5f5f75 !important;
+  color: white !important;
+}
+
+body.dark-mode [class*="playerCardList"] {
+  background-color: transparent !important;
+}
+
+body.dark-mode [class*="playerCardList"]:hover {
+  background-color: transparent !important;
+}
+
+body.dark-mode [class*="searchInput"],
+body.dark-mode [class*="filterDropdown"] {
+  background-color: #4a4650 !important;
+  color: #fff !important;
+  border: 1px solid #5a5560 !important;
+}
+
+body.dark-mode [class*="saveTeam"],
+body.dark-mode [class*="modalButton"],
+body.dark-mode [class*="addButton"] {
+  background-color: #00cc6a !important;
+  color: #000 !important;
+}
+
+body.dark-mode [class*="saveTeam"]:hover,
+body.dark-mode [class*="modalButton"]:hover,
+body.dark-mode [class*="addButton"]:hover {
+  background-color: #00b45d !important;
+}
+
+body.dark-mode [class*="standingsBox"],
+body.dark-mode [class*="leagueBox"],
+body.dark-mode [class*="sidePanel"] {
+  background-color: #4a4650 !important;
+  color: #fff !important;
+}
+
+body.dark-mode [class*="playerMarker"]:hover {
+  background-color: rgba(255, 255, 255, 0.1) !important;
+}
+
+body.dark-mode h1,
+body.dark-mode h2,
+body.dark-mode h3,
+body.dark-mode h4,
+body.dark-mode h5,
+body.dark-mode h6 {
+  color: #ffffff !important;
+}

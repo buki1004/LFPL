@@ -10,6 +10,7 @@ import Team from "./Team";
 import Transfers from "./Transfer";
 import Navbar from "./Navbar";
 import League from "./League";
+import "./Darkmode.css";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(

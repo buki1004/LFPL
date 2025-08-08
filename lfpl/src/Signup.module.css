@@ -15,7 +15,7 @@
   text-align: center;
 }
 
-input {
+.signupInput {
   font-size: 1rem;
   padding: 0.5rem;
   text-align: left;
@@ -25,7 +25,7 @@ input {
   margin-bottom: 1rem;
 }
 
-button {
+.signupButton {
   background-color: #00ff85;
   color: #000;
   border: none;
@@ -40,15 +40,15 @@ button {
   transition: scale 0.15s;
 }
 
-button:hover {
+.signupButton:hover {
   background-color: #00e07b;
 }
 
-button:active {
+.signupButton:active {
   scale: 0.97;
 }
 
-a {
+.signupAnchor {
   text-decoration: none;
   background-color: none;
   color: #000;
@@ -61,7 +61,7 @@ a {
   transition: background-color 0.2s ease-in-out, border 0.2s ease-in-out;
 }
 
-a:hover {
+.signupAnchor:hover {
   background-color: #f0f0f0;
   border: 1px solid #ccc;
 }

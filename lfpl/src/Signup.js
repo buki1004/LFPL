@@ -39,23 +39,32 @@ const Signup = () => {
           value={email}
           placeholder="Email"
           onChange={(e) => setEmail(e.target.value)}
+          className={styles.signupInput}
         />
         <input
           type="username"
           value={username}
           placeholder="Username"
           onChange={(e) => setUsername(e.target.value)}
+          className={styles.signupInput}
         />
         <input
           type="password"
           value={password}
           placeholder="Password"
           onChange={(e) => setPassword(e.target.value)}
+          className={styles.signupInput}
         />
-        <button type="submit" onClick={handleSignup}>
+        <button
+          type="submit"
+          onClick={handleSignup}
+          className={styles.signupButton}
+        >
           Sign up
         </button>
-        <a href="/login">Already have an account? Click here to login</a>
+        <a href="/login" className={styles.signupAnchor}>
+          Already have an account? Click here to login
+        </a>
       </form>
     </div>
   );
