@@ -1,6 +1,15 @@
 body.dark-mode {
-  background-color: #38343c !important;
+  /*background-color: #38343c !important;*/
+  background-color: #2c2d32 !important;
   color: #f0f0f0 !important;
+}
+
+body.dark-mode [class*="accountList"],
+body.dark-mode [class*="playerList"],
+body.dark-mode [class*="leagueList"],
+body.dark-mode [class*="leagueActions"] {
+  background-color: #323339 !important;
+  border: 1px solid gainsboro !important;
 }
 
 body.dark-mode [class*="playerCard"],
@@ -51,7 +60,8 @@ body.dark-mode [class*="playerCardList"]:hover {
 }
 
 body.dark-mode [class*="searchInput"],
-body.dark-mode [class*="filterDropdown"] {
+body.dark-mode [class*="filterDropdown"],
+body.dark-mode [class*="leagueInput"] {
   background-color: #4a4650 !important;
   color: #fff !important;
   border: 1px solid #5a5560 !important;

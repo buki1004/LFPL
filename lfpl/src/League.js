@@ -129,7 +129,7 @@ const League = () => {
 
   return (
     <div className={styles.container}>
-      <div className={styles.left}>
+      <div className={styles.leagueActions}>
         <h2>Create a League</h2>
         <input
           type="text"
@@ -154,7 +154,7 @@ const League = () => {
           Join
         </button>
       </div>
-      <div className={styles.right}>
+      <div className={styles.leagueList}>
         <h2>Your Leagues</h2>
         {userLeagues.length === 0 ? (
           <p>You are not in any leagues yet.</p>

@@ -45,6 +45,7 @@ div {
   gap: 2rem;
   padding: 0 1rem;
   margin: 0;
+  margin-bottom: 20px;
   height: 30px;
   position: relative;
 }

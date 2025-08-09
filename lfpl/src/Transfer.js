@@ -238,165 +238,163 @@ const Transfers = () => {
 
   return (
     <div className={styles.layoutContainer}>
-      <div className={styles.accountList}>
-        <h1>My Team</h1>
-        {userTeam ? (
-          <div>
-            <h2>
-              Your budget: {parseFloat((userTeam.budget / 100).toFixed(2))}
-            </h2>
-            <button className={styles.saveTeam} onClick={() => saveTeam()}>
-              Save team
-            </button>
-            <h2>Starters</h2>
-            <div className={styles.pitchContainer}>
-              <img src={pitch} className={styles.pitchImage} />
-              {groupAndSortPlayers(
-                userTeam.players.filter((p) => !p.isSubstitute)
-              ).flatMap(([position, players], i) =>
-                players.map((player, idx) => {
-                  const coordinates = getPlayerCoordinates(
-                    position,
-                    idx,
-                    players.length
-                  );
-                  return (
-                    <div
-                      key={player._id}
-                      className={styles.playerMarker}
-                      style={{ top: coordinates.top, left: coordinates.left }}
-                      onClick={() =>
-                        setModalOpenForPlayer(
-                          userTeam.players.find(
-                            (p) => p.player._id === player.playerId
-                          )
-                        )
-                      }
-                    >
-                      <img
-                        src={getTeamLogo(player.teamName)}
-                        className={styles.teamLogo}
-                      />
-                      {player.isCaptain ? (
-                        <div className={styles.playerName}>
-                          {getLastName(player.name)} (C)
-                        </div>
-                      ) : (
-                        <div className={styles.playerName}>
-                          {getLastName(player.name)}
-                        </div>
-                      )}
-                      <div className={styles.playerPoints}>{player.points}</div>
-                    </div>
-                  );
-                })
-              )}
-            </div>
-            <h2>Substitutes</h2>
-            <div className={styles.subContainer}>
-              {userTeam.players
-                .filter((p) => p.isSubstitute)
-                .map((player) => (
+      {userTeam ? (
+        <div className={styles.accountList}>
+          <h1>My Team</h1>
+          <h2>Your budget: {parseFloat((userTeam.budget / 100).toFixed(2))}</h2>
+          <button className={styles.saveTeam} onClick={() => saveTeam()}>
+            Save team
+          </button>
+          <h2>Starters</h2>
+          <div className={styles.pitchContainer}>
+            <img src={pitch} className={styles.pitchImage} />
+            {groupAndSortPlayers(
+              userTeam.players.filter((p) => !p.isSubstitute)
+            ).flatMap(([position, players], i) =>
+              players.map((player, idx) => {
+                const coordinates = getPlayerCoordinates(
+                  position,
+                  idx,
+                  players.length
+                );
+                return (
                   <div
-                    key={player.player._id}
-                    className={styles.subCard}
-                    onClick={() => setModalOpenForPlayer(player)}
+                    key={player._id}
+                    className={styles.playerMarker}
+                    style={{ top: coordinates.top, left: coordinates.left }}
+                    onClick={() =>
+                      setModalOpenForPlayer(
+                        userTeam.players.find(
+                          (p) => p.player._id === player.playerId
+                        )
+                      )
+                    }
                   >
                     <img
-                      src={getTeamLogo(player.player.teamName)}
+                      src={getTeamLogo(player.teamName)}
                       className={styles.teamLogo}
                     />
-                    <div className={styles.playerName}>
-                      {getLastName(player.player.name)}
-                    </div>
-                    <div className={styles.playerPoints}>
-                      {player.player.points}
-                    </div>
-                    <div>{player.player.position.substring(0, 3)}</div>
+                    {player.isCaptain ? (
+                      <div className={styles.playerName}>
+                        {getLastName(player.name)} (C)
+                      </div>
+                    ) : (
+                      <div className={styles.playerName}>
+                        {getLastName(player.name)}
+                      </div>
+                    )}
+                    <div className={styles.playerPoints}>{player.points}</div>
                   </div>
-                ))}
-            </div>
+                );
+              })
+            )}
           </div>
-        ) : (
-          <p>No team yet! Add players above.</p>
-        )}
-      </div>
-      <div className={styles.playerList}>
-        <h1>Player List</h1>
-        <p>Search players by name or club</p>
-        <input
-          type="text"
-          placeholder="Search..."
-          className={styles.searchInput}
-          onChange={(e) => setQuery(e.target.value)}
-        />
-        <div className={styles.dropdown}>
-          <div
-            className={styles.dropdownHeader}
-            onClick={() => setIsDropDownOpen(!isDropDownOpen)}
-          >
-            {selectedPosition} ▾
-          </div>
-          {isDropDownOpen && (
-            <div className={styles.dropdownList}>
-              {positions.map((pos) => (
+          <h2>Substitutes</h2>
+          <div className={styles.subContainer}>
+            {userTeam.players
+              .filter((p) => p.isSubstitute)
+              .map((player) => (
                 <div
-                  key={pos}
-                  className={styles.dropdownItem}
-                  onClick={() => {
-                    setSelectedPosition(pos);
-                    setIsDropDownOpen(false);
-                  }}
+                  key={player.player._id}
+                  className={styles.subCard}
+                  onClick={() => setModalOpenForPlayer(player)}
                 >
-                  {pos}
+                  <img
+                    src={getTeamLogo(player.player.teamName)}
+                    className={styles.teamLogo}
+                  />
+                  <div className={styles.playerName}>
+                    {getLastName(player.player.name)}
+                  </div>
+                  <div className={styles.playerPoints}>
+                    {player.player.points}
+                  </div>
+                  <div>{player.player.position.substring(0, 3)}</div>
                 </div>
               ))}
-            </div>
-          )}
+          </div>
         </div>
-        <div className={styles.playerCardList}>
-          {backendData.response
-            .filter((entry) => {
-              const position = entry.statistics[0].games.position;
-              return (
-                selectedPosition === "All Positions" ||
-                position === selectedPosition
-              );
-            })
-            .map((entry, index) => {
-              const player = entry.player;
-              const stats = entry.statistics[0];
-              const isInTeam = userTeam?.players?.some(
-                (p) => p.player?.id == player.id
-              );
-
-              return (
-                <div
-                  key={index}
-                  className={`${styles.playerCard} ${
-                    isInTeam ? styles.disabledCard : ""
-                  }`}
-                >
-                  <div className={styles.playerInfo}>
-                    <img
-                      src={getTeamLogo(stats.team.name)}
-                      className={styles.clubLogo}
-                    />
-                    <strong>{player.name}</strong>
-                    <div className={styles.playerMeta}>
-                      {stats.games.position} • {stats.team.name} • £
-                      {player.price}
-                    </div>
-                  </div>
-                  <button
-                    className={styles.addButton}
-                    onClick={() => addToTeam(entry)}
+      ) : (
+        <p>No team yet! Add players above.</p>
+      )}
+      <div className={styles.playerList}>
+        <div className={styles.listContainer}>
+          <h1>Player List</h1>
+          <p>Search players by name or club</p>
+          <input
+            type="text"
+            placeholder="Search..."
+            className={styles.searchInput}
+            onChange={(e) => setQuery(e.target.value)}
+          />
+          <div className={styles.dropdown}>
+            <div
+              className={styles.dropdownHeader}
+              onClick={() => setIsDropDownOpen(!isDropDownOpen)}
+            >
+              {selectedPosition} ▾
+            </div>
+            {isDropDownOpen && (
+              <div className={styles.dropdownList}>
+                {positions.map((pos) => (
+                  <div
+                    key={pos}
+                    className={styles.dropdownItem}
+                    onClick={() => {
+                      setSelectedPosition(pos);
+                      setIsDropDownOpen(false);
+                    }}
                   >
-                    +
-                  </button>
-                </div>
-              );
-            })}
+                    {pos}
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+          <div className={styles.playerCardList}>
+            {backendData.response
+              .filter((entry) => {
+                const position = entry.statistics[0].games.position;
+                return (
+                  selectedPosition === "All Positions" ||
+                  position === selectedPosition
+                );
+              })
+              .map((entry, index) => {
+                const player = entry.player;
+                const stats = entry.statistics[0];
+                const isInTeam = userTeam?.players?.some(
+                  (p) => p.player?.id == player.id
+                );
+
+                return (
+                  <div
+                    key={index}
+                    className={`${styles.playerCard} ${
+                      isInTeam ? styles.disabledCard : ""
+                    }`}
+                  >
+                    <div className={styles.playerInfo}>
+                      <img
+                        src={getTeamLogo(stats.team.name)}
+                        className={styles.clubLogo}
+                      />
+                      <strong>{player.name}</strong>
+                      <div className={styles.playerMeta}>
+                        {stats.games.position} • {stats.team.name} • £
+                        {player.price}
+                      </div>
+                    </div>
+                    <button
+                      className={styles.addButton}
+                      onClick={() => addToTeam(entry)}
+                    >
+                      +
+                    </button>
+                  </div>
+                );
+              })}
+          </div>
         </div>
       </div>
       {modalOpenForPlayer && (
