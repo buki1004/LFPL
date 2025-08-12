@@ -4,16 +4,23 @@ const auth = require("./auth");
 const User = require("./models/User");
 const Player = require("./models/Player");
 const Team = require("./models/Team");
+const { random } = require("nanoid");
 
 router.post("/pointsTest", auth, async (req, res) => {
   try {
     const allPlayers = await Player.find({});
-    const update = allPlayers.map((player) => ({
-      updateOne: {
-        filter: { _id: player._id },
-        update: { $set: { points: Math.floor(Math.random() * 10) } },
-      },
-    }));
+    const update = allPlayers.map((player) => {
+      const randomPoints = Math.floor(Math.random() * 10);
+      return {
+        updateOne: {
+          filter: { _id: player._id },
+          update: {
+            $set: { gameweekPoints: randomPoints },
+            $inc: { totalPoints: randomPoints },
+          },
+        },
+      };
+    });
 
     await Player.bulkWrite(update);
 
@@ -21,7 +28,7 @@ router.post("/pointsTest", auth, async (req, res) => {
     const teamUpdates = allTeams.map((team) => {
       const totalPoints = team.players.reduce((sum, p) => {
         if (p.isSubstitute) return sum;
-        const basePoints = p.player?.points || 0;
+        const basePoints = p.player?.gameweekPoints || 0;
         const finalPoints = p.isCaptain ? basePoints * 2 : basePoints;
 
         return sum + finalPoints;

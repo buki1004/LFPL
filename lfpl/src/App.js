@@ -327,12 +327,12 @@ const App = () => {
                       {player.isCaptain ? (
                         <strong>
                           {player.name} ({(player.price / 100).toFixed(1)}){" "}
-                          {player.points * 2}
+                          {player.gameweekPoints * 2}
                         </strong>
                       ) : (
                         <>
                           {player.name} ({(player.price / 100).toFixed(1)}){" "}
-                          {player.points}
+                          {player.gameweekPoints}
                         </>
                       )}
                       <button onClick={() => removeFromTeam(player)}>
@@ -360,12 +360,12 @@ const App = () => {
                       {player.isCaptain ? (
                         <strong>
                           {player.name} ({(player.price / 100).toFixed(1)}){" "}
-                          {player.points}
+                          {player.gameweekPoints}
                         </strong>
                       ) : (
                         <>
                           {player.name} ({(player.price / 100).toFixed(1)}){" "}
-                          {player.points}
+                          {player.gameweekPoints}
                         </>
                       )}
                       <button onClick={() => removeFromTeam(player)}>

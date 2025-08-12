@@ -7,7 +7,8 @@ body.dark-mode {
 body.dark-mode [class*="accountList"],
 body.dark-mode [class*="playerList"],
 body.dark-mode [class*="leagueList"],
-body.dark-mode [class*="leagueActions"] {
+body.dark-mode [class*="leagueActions"],
+body.dark-mode [class*="signupForm"] {
   background-color: #323339 !important;
   border: 1px solid gainsboro !important;
 }
@@ -91,6 +92,14 @@ body.dark-mode [class*="playerMarker"]:hover {
   background-color: rgba(255, 255, 255, 0.1) !important;
 }
 
+body.dark-mode [class*="signupAnchor"] {
+  color: #fff;
+}
+
+body.dark-mode [class*="signupAnchor"]:hover {
+  background-color: #5f5f75;
+}
+
 body.dark-mode h1,
 body.dark-mode h2,
 body.dark-mode h3,
@@ -98,4 +107,13 @@ body.dark-mode h4,
 body.dark-mode h5,
 body.dark-mode h6 {
   color: #ffffff !important;
+}
+
+body.dark-mode .nav {
+  background: linear-gradient(to right, #6a1b9a, #37003c);
+}
+
+body.dark-mode .nav a.active,
+body.dark-mode .nav a:hover {
+  border-bottom: 3px solid #ff2882;
 }

@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from "react";
 import styles from "./Signup.module.css";
+import { useNavigate } from "react-router-dom";
 
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const navigate = useNavigate();
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -28,7 +30,7 @@ const Login = () => {
       localStorage.setItem("token", data.token);
       localStorage.setItem("userId", data.userId);
       localStorage.setItem("teamId", data.teamId);
-      window.location.href = "/";
+      navigate("/");
     } catch (error) {
       alert(error.message);
     }
@@ -38,7 +40,7 @@ const Login = () => {
 
   return (
     <div className={styles.formContainer}>
-      <form action={handleLogin} className={styles.signupForm}>
+      <form onSubmit={handleLogin} className={styles.signupForm}>
         <h2>Login</h2>
         <input
           type="email"
@@ -56,11 +58,7 @@ const Login = () => {
           required
           className={styles.signupInput}
         />
-        <button
-          type="submit"
-          onClick={handleLogin}
-          className={styles.signupButton}
-        >
+        <button type="submit" className={styles.signupButton}>
           Login
         </button>
         <a href="/signup" className={styles.signupAnchor}>

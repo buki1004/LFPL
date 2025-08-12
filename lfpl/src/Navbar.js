@@ -1,4 +1,4 @@
-import { useLocation } from "react-router-dom";
+import { useLocation, NavLink } from "react-router-dom";
 import { useState, useEffect } from "react";
 
 export default function Navbar() {
@@ -21,18 +21,18 @@ export default function Navbar() {
 
   return (
     <nav className="nav">
-      <a href="/" className="home">
+      <NavLink to="/" className="nav-link">
         Home
-      </a>
-      <a href="/team" className="team">
+      </NavLink>
+      <NavLink to="/team" className="nav-link">
         Team
-      </a>
-      <a href="/transfers" className="transfers">
+      </NavLink>
+      <NavLink to="/transfers" className="nav-link">
         Transfers
-      </a>
-      <a href="/league" className="league">
+      </NavLink>
+      <NavLink to="/league" className="nav-link">
         Leagues
-      </a>
+      </NavLink>
       <button
         className="dark-mode-toggle"
         onClick={() => setDarkMode(!darkMode)}

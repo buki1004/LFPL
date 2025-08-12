@@ -1,6 +1,12 @@
 import React, { useEffect, useState } from "react";
 import styles from "./League.module.css";
 import { useNavigate } from "react-router-dom";
+import {
+  createLeague,
+  joinLeague,
+  fetchAndSetUserLeagues,
+} from "./services/leagueServices";
+import { copyCode } from "./utils/teamUtils";
 
 const League = () => {
   const [userTeam, setUserTeam] = useState(null);
@@ -8,82 +14,7 @@ const League = () => {
   const [userLeagues, setUserLeagues] = useState([]);
   const [newLeagueName, setNewLeagueName] = useState("");
   const [joinCode, setJoinCode] = useState("");
-  const [showCode, setShowCode] = useState({});
   const navigate = useNavigate();
-
-  const fetchUserLeagues = async () => {
-    try {
-      const token = localStorage.getItem("token");
-      const response = await fetch("/api/league/my-leagues", {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-
-      const leagues = await response.json();
-      setUserLeagues(leagues);
-    } catch (error) {
-      console.error("Failed to fetch leagues:", error);
-    }
-  };
-
-  const handleCreateLeague = async () => {
-    if (!newLeagueName) return;
-
-    try {
-      const token = localStorage.getItem("token");
-      const response = await fetch("/api/league/create", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({ name: newLeagueName }),
-      });
-
-      if (response.ok) {
-        setNewLeagueName("");
-        fetchUserLeagues();
-      }
-    } catch (error) {
-      console.error("League creation failed:", error);
-    }
-  };
-
-  const handleJoinLeague = async () => {
-    if (!joinCode) return;
-
-    try {
-      const token = localStorage.getItem("token");
-      const response = await fetch("/api/league/join", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({ code: joinCode }),
-      });
-
-      if (response.ok) {
-        setJoinCode("");
-        fetchUserLeagues();
-      }
-    } catch (error) {
-      console.error("League join failed:", error);
-    }
-  };
-
-  const toggleCode = (leagueId) => {
-    setShowCode((prev) => ({
-      ...prev,
-      [leagueId]: !prev[leagueId],
-    }));
-  };
-
-  const copyCode = (s) => {
-    navigator.clipboard.writeText(s);
-    alert("League code copied to clipboard!");
-  };
 
   useEffect(() => {
     const token = localStorage.getItem("token");
@@ -124,7 +55,7 @@ const League = () => {
     };
 
     fetchData();
-    fetchUserLeagues();
+    fetchAndSetUserLeagues(setUserLeagues);
   }, []);
 
   return (
@@ -138,7 +69,12 @@ const League = () => {
           onChange={(e) => setNewLeagueName(e.target.value)}
           className={styles.leagueInput}
         />
-        <button onClick={handleCreateLeague} className={styles.leagueBtn}>
+        <button
+          onClick={() =>
+            createLeague(newLeagueName, setNewLeagueName, setUserLeagues)
+          }
+          className={styles.leagueBtn}
+        >
           Create
         </button>
 
@@ -150,7 +86,10 @@ const League = () => {
           onChange={(e) => setJoinCode(e.target.value)}
           className={styles.leagueInput}
         />
-        <button onClick={handleJoinLeague} className={styles.leagueBtn}>
+        <button
+          onClick={() => joinLeague(joinCode, setJoinCode, setUserLeagues)}
+          className={styles.leagueBtn}
+        >
           Join
         </button>
       </div>
@@ -173,10 +112,6 @@ const League = () => {
                     </button>
                   )}
                 </div>
-
-                {showCode[league._id] && (
-                  <div className={styles.leagueCode}>Code: {league.code}</div>
-                )}
 
                 <div className={styles.standings}>
                   <strong>Standings:</strong>

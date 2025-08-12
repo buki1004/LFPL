@@ -2,13 +2,21 @@ import React, { useEffect, useState } from "react";
 import styles from "./Team.module.css";
 import { useNavigate } from "react-router-dom";
 import pitch from "./images/pitch.png";
+import { makeCaptain, makeSubstitute } from "./services/teamServices";
+import { fetchAndSetUserLeagues } from "./services/leagueServices";
+import {
+  getLastName,
+  saveTeam,
+  groupAndSortPlayers,
+  getPlayerCoordinates,
+  copyCode,
+} from "./utils/teamUtils";
 
 const Team = () => {
   const [userTeam, setUserTeam] = useState(null);
   const [userPoints, setUserPoints] = useState(0);
   const [totalPoints, setTotalPoints] = useState(0);
   const [userLeagues, setUserLeagues] = useState([]);
-  const [showCode, setShowCode] = useState({});
   const [modalOpenForPlayer, setModalOpenForPlayer] = useState(null);
   const navigate = useNavigate();
 
@@ -34,169 +42,6 @@ const Team = () => {
 
   const getTeamLogo = (teamName) => {
     return logos[teamName];
-  };
-
-  const getLastName = (x) => {
-    const lastName = x.split(" ").pop();
-    return lastName;
-  };
-
-  const groupAndSortPlayers = (players = []) => {
-    const positionOrder = {
-      Goalkeeper: 0,
-      Defender: 1,
-      Midfielder: 2,
-      Attacker: 3,
-    };
-
-    const grouped = players.reduce((acc, entry) => {
-      if (!entry.player || !entry.player.position) return acc;
-
-      const position = entry.player.position;
-      if (!acc[position]) acc[position] = [];
-
-      acc[position].push({
-        ...entry.player,
-        isSubstitute: entry.isSubstitute,
-        isCaptain: entry.isCaptain,
-        playerId: entry.player._id,
-        _id: entry._id,
-      });
-
-      return acc;
-    }, {});
-
-    Object.keys(grouped).forEach((position) => {
-      grouped[position].sort((a, b) => {
-        if (b.price !== a.price) {
-          return b.price - a.price;
-        }
-        return a.name.localeCompare(b.name);
-      });
-    });
-
-    return Object.entries(grouped).sort(
-      ([aPos], [bPos]) => positionOrder[aPos] - positionOrder[bPos]
-    );
-  };
-
-  const getPlayerCoordinates = (position, index, total) => {
-    const yMap = {
-      Goalkeeper: "10%",
-      Defender: "32%",
-      Midfielder: "53%",
-      Attacker: "80%",
-    };
-
-    const y = yMap[position] || "50%";
-
-    const spacing = 100 / (total + 1);
-    const x = `${spacing * (index + 1)}%`;
-
-    return { top: y, left: x };
-  };
-
-  const makeCaptain = async (player) => {
-    try {
-      const token = localStorage.getItem("token");
-      const playerId = player.player?._id || player._id;
-      const response = await fetch("/api/team/make-captain", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({ playerId }),
-      });
-
-      if (!response.ok) throw new Error("Failed to set captain");
-
-      const updatedTeam = await response.json();
-      setUserTeam(updatedTeam);
-    } catch (error) {
-      console.log("Error");
-    }
-  };
-
-  const makeSubstitute = async (player) => {
-    try {
-      const token = localStorage.getItem("token");
-      const playerId = player.player?._id || player._id;
-      const response = await fetch("/api/team/substitute", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({ playerId }),
-      });
-
-      if (!response.ok) throw new Error("Failed to make substitute");
-
-      console.log("Succes at doing sub");
-      const updatedTeam = await response.json();
-      setUserTeam(updatedTeam);
-    } catch (error) {
-      console.log("Not good");
-    }
-  };
-
-  const fetchUserLeagues = async () => {
-    try {
-      const token = localStorage.getItem("token");
-      const response = await fetch("/api/league/my-leagues", {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-
-      const leagues = await response.json();
-      setUserLeagues(leagues);
-    } catch (error) {
-      console.error("Failed to fetch leagues:", error);
-    }
-  };
-
-  const toggleCode = (leagueId) => {
-    setShowCode((prev) => ({
-      ...prev,
-      [leagueId]: !prev[leagueId],
-    }));
-  };
-
-  const saveTeam = () => {
-    const positions = {
-      Goalkeeper: 0,
-      Defender: 0,
-      Midfielder: 0,
-      Attacker: 0,
-    };
-
-    let count = 0;
-
-    userTeam.players.forEach((p) => {
-      if (!p.isSubstitute) {
-        const pos = p.player.position;
-        if (pos in positions) {
-          positions[pos]++;
-          count++;
-        }
-      }
-    });
-
-    if (
-      positions.Goalkeeper < 1 ||
-      positions.Defender < 3 ||
-      positions.Midfielder < 3 ||
-      positions.Attacker < 1 ||
-      count < 11
-    ) {
-      alert(
-        "Your team needs to have at least 11 players starting, and at least 1 Goalkeeper, 3 Defenders, 3 Midfielders and 1 Attacker!"
-      );
-    } else {
-      navigate("/");
-    }
   };
 
   useEffect(() => {
@@ -239,7 +84,7 @@ const Team = () => {
     };
 
     fetchData();
-    fetchUserLeagues();
+    fetchAndSetUserLeagues(setUserLeagues);
   }, []);
 
   return (
@@ -250,7 +95,10 @@ const Team = () => {
           <h2>
             GW points: {userPoints} Total points: {totalPoints}
           </h2>
-          <button className={styles.saveTeam} onClick={() => saveTeam()}>
+          <button
+            className={styles.saveTeam}
+            onClick={() => saveTeam(userTeam, navigate)}
+          >
             Save team
           </button>
           <h2>Starters</h2>
@@ -291,7 +139,9 @@ const Team = () => {
                         {getLastName(player.name)}
                       </div>
                     )}
-                    <div className={styles.playerPoints}>{player.points}</div>
+                    <div className={styles.playerPoints}>
+                      {player.gameweekPoints}
+                    </div>
                   </div>
                 );
               })
@@ -315,7 +165,7 @@ const Team = () => {
                     {getLastName(player.player.name)}
                   </div>
                   <div className={styles.playerPoints}>
-                    {player.player.points}
+                    {player.player.gameweekPoints}
                   </div>
                   <div>{player.player.position.substring(0, 3)}</div>
                 </div>
@@ -338,10 +188,18 @@ const Team = () => {
             <h3>
               {modalOpenForPlayer.player?.name || modalOpenForPlayer.name}
             </h3>
+            <p>
+              GW points:{" "}
+              {modalOpenForPlayer.player?.gameweekPoints ||
+                modalOpenForPlayer.gameweekPoints}{" "}
+              Total points:{" "}
+              {modalOpenForPlayer.player?.totalPoints ||
+                modalOpenForPlayer.totalPoints}
+            </p>
             {!modalOpenForPlayer.isSubstitute && (
               <button
                 onClick={() => {
-                  makeCaptain(modalOpenForPlayer);
+                  makeCaptain(modalOpenForPlayer, setUserTeam);
 
                   setModalOpenForPlayer(null);
                 }}
@@ -353,7 +211,7 @@ const Team = () => {
 
             <button
               onClick={() => {
-                makeSubstitute(modalOpenForPlayer);
+                makeSubstitute(modalOpenForPlayer, setUserTeam);
                 setModalOpenForPlayer(null);
               }}
               className={styles.modalButton}
@@ -382,16 +240,12 @@ const Team = () => {
                   {userTeam?.owner === league.createdBy._id && (
                     <button
                       className={styles.saveTeam}
-                      onClick={() => toggleCode(league._id)}
+                      onClick={() => copyCode(league._id)}
                     >
                       Code
                     </button>
                   )}
                 </div>
-
-                {showCode[league._id] && (
-                  <div className={styles.leagueCode}>Code: {league.code}</div>
-                )}
 
                 <div className={styles.standings}>
                   <strong>Standings:</strong>

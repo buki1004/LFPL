@@ -5,7 +5,8 @@ const playerSchema = new mongoose.Schema({
   name: { type: String, required: true },
   position: { type: String, required: true },
   price: { type: Number, default: 0 },
-  points: { type: Number, default: 0 },
+  gameweekPoints: { type: Number, default: 0 },
+  totalPoints: { type: Number, default: 0 },
   teamName: { type: String, default: "" },
   statistics: {
     appearances: Number,

@@ -1,6 +1,6 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
-import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
 import "./index.css";
 import App from "./App";
 import Signup from "./Signup";
@@ -10,25 +10,56 @@ import Team from "./Team";
 import Transfers from "./Transfer";
 import Navbar from "./Navbar";
 import League from "./League";
+import ProtectedRoute from "./ProtectedRoute";
 import "./Darkmode.css";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
   <BrowserRouter>
-    <Navbar></Navbar>
+    <Navbar />
     <Routes>
       <Route
         path="/"
         element={
-          localStorage.getItem("token") ? <App /> : <Navigate to="/login" />
+          <ProtectedRoute>
+            <App />
+          </ProtectedRoute>
         }
       />
       <Route path="/signup" element={<Signup />} />
       <Route path="/login" element={<Login />} />
-      <Route path="/createteam" element={<CreateTeam />} />
-      <Route path="/team" element={<Team />} />
-      <Route path="/transfers" element={<Transfers />} />
-      <Route path="/league" element={<League />} />
+      <Route
+        path="/createteam"
+        element={
+          <ProtectedRoute>
+            <CreateTeam />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/team"
+        element={
+          <ProtectedRoute>
+            <Team />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/transfers"
+        element={
+          <ProtectedRoute>
+            <Transfers />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/league"
+        element={
+          <ProtectedRoute>
+            <League />
+          </ProtectedRoute>
+        }
+      />
     </Routes>
   </BrowserRouter>
 );
