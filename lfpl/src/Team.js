@@ -173,7 +173,26 @@ const Team = () => {
           </div>
         </div>
       ) : (
-        <p>No team yet! Add players above.</p>
+        <div className={styles.accountList}>
+          <h1>My Team</h1>
+          <h2>
+            GW points: {userPoints} Total points: {totalPoints}
+          </h2>
+          <button className={styles.saveTeam}>Save team</button>
+          <h2>Starters</h2>
+          <div className={styles.pitchContainer}>
+            <img src={pitch} className={styles.pitchImage} />
+            {[...Array(11)].map((_, i) => (
+              <div
+                key={i}
+                className={`${styles.playerMarker} ${styles.loadingCard}`}
+                style={{ top: "50%", left: "50%" }}
+              >
+                Loading...
+              </div>
+            ))}
+          </div>
+        </div>
       )}
       {modalOpenForPlayer && (
         <div className={styles.modalOverlay}>

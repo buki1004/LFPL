@@ -3,49 +3,11 @@ import "./App.css";
 import { useNavigate } from "react-router-dom";
 
 const App = () => {
-  const [backendData, setBackendData] = useState({ response: [] });
-  const [query, setQuery] = useState("");
   const [userTeam, setUserTeam] = useState(null);
   const [userPoints, setUserPoints] = useState(0);
   const [totalPoints, setTotalPoints] = useState(0);
   const [modalOpenForPlayer, setModalOpenForPlayer] = useState(null);
   const navigate = useNavigate();
-
-  const addToTeam = async (player) => {
-    try {
-      const token = localStorage.getItem("token");
-      const roundedPrice = Math.round(player.player.price * 100);
-
-      const response = await fetch("/api/team/add-player", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({
-          player: {
-            id: player.player.id,
-            name: player.player.name,
-            position: player.statistics[0].games.position,
-            price: roundedPrice,
-            teamName: player.statistics[0].team.name,
-          },
-        }),
-      });
-
-      const result = await response.text();
-      if (!response.ok) {
-        alert("Error: " + JSON.parse(result).error);
-        throw new Error(JSON.parse(result).error || "Failed to add player ");
-      }
-
-      const updatedTeam = JSON.parse(result);
-      setUserTeam(updatedTeam);
-      console.log("Successfully added player to team!");
-    } catch (error) {
-      console.error("Failed to add player:", error);
-    }
-  };
 
   const removeFromTeam = async (player) => {
     try {
@@ -229,19 +191,6 @@ const App = () => {
   };
 
   useEffect(() => {
-    const fetchPlayers = async () => {
-      try {
-        const response = await fetch(`/api?name=${query}`);
-        const data = await response.json();
-        setBackendData(data);
-      } catch (error) {
-        console.error("Fetch error:", error);
-      }
-    };
-    fetchPlayers();
-  }, [query]);
-
-  useEffect(() => {
     const fetchData = async () => {
       const token = localStorage.getItem("token");
       if (!token) return;
@@ -278,25 +227,6 @@ const App = () => {
 
   return (
     <div>
-      <div className="playerList">
-        <h1>Player List</h1>
-        <p>Search players by name or club</p>
-        <input
-          type="text"
-          placeholder="Search..."
-          className="search"
-          onChange={(e) => setQuery(e.target.value)}
-        />
-        <ul className="list">
-          {backendData.response.map((entry, index) => (
-            <li key={index} className="listItem">
-              {entry.player.name} {entry.statistics[0].games.position}{" "}
-              {entry.statistics[0].team.name} {entry.player.price}
-              <button onClick={() => addToTeam(entry)}>Add</button>
-            </li>
-          ))}
-        </ul>
-      </div>
       <div className="accountList">
         <h1>My Team</h1>
         <button onClick={() => handleLogout()}>Logout</button>

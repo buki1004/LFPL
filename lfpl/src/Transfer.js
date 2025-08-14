@@ -12,7 +12,7 @@ import {
 } from "./utils/teamUtils";
 
 const Transfers = () => {
-  const [backendData, setBackendData] = useState({ response: [] });
+  const [backendData, setBackendData] = useState([]);
   const [query, setQuery] = useState("");
   const [userTeam, setUserTeam] = useState(null);
   const [modalOpenForPlayer, setModalOpenForPlayer] = useState(null);
@@ -55,7 +55,7 @@ const Transfers = () => {
   useEffect(() => {
     const fetchPlayers = async () => {
       try {
-        const response = await fetch(`/api?name=${query}`);
+        const response = await fetch(`/api/players?name=${query}`);
         const data = await response.json();
         setBackendData(data);
       } catch (error) {
@@ -168,7 +168,35 @@ const Transfers = () => {
           </div>
         </div>
       ) : (
-        <p>No team yet! Add players above.</p>
+        <div className={styles.accountList}>
+          <h1>My Team</h1>
+          <h2>Loading...</h2>
+          <button className={styles.saveTeam}>Save team</button>
+          <h2>Starters</h2>
+          <div className={styles.pitchContainer}>
+            <img src={pitch} className={styles.pitchImage} />
+            {[...Array(11)].map((_, i) => (
+              <div
+                key={i}
+                className={`${styles.playerMarker} ${styles.loadingCard}`}
+                style={{ top: "50%", left: "50%" }}
+              >
+                Loading...
+              </div>
+            ))}
+          </div>
+          <h2>Substitutes</h2>
+          <div className={styles.subContainer}>
+            {[...Array(4)].map((_, i) => (
+              <div
+                key={i}
+                className={`${styles.subCard} ${styles.loadingCard}`}
+              >
+                Loading...
+              </div>
+            ))}
+          </div>
+        </div>
       )}
       <div className={styles.playerList}>
         <div className={styles.listContainer}>
@@ -205,42 +233,40 @@ const Transfers = () => {
             )}
           </div>
           <div className={styles.playerCardList}>
-            {backendData.response
-              .filter((entry) => {
-                const position = entry.statistics[0].games.position;
+            {backendData
+              .filter((player) => {
+                const position = player.position || "Unknown";
                 return (
                   selectedPosition === "All Positions" ||
                   position === selectedPosition
                 );
               })
-              .map((entry, index) => {
-                const player = entry.player;
-                const stats = entry.statistics[0];
+              .map((player, index) => {
+                const position = player.position || "Unknown";
                 const isInTeam = userTeam?.players?.some(
                   (p) => p.player?.id == player.id
                 );
 
                 return (
                   <div
-                    key={index}
+                    key={player._id}
                     className={`${styles.playerCard} ${
                       isInTeam ? styles.disabledCard : ""
                     }`}
                   >
                     <div className={styles.playerInfo}>
                       <img
-                        src={getTeamLogo(stats.team.name)}
+                        src={getTeamLogo(player.teamName)}
                         className={styles.clubLogo}
                       />
                       <strong>{player.name}</strong>
                       <div className={styles.playerMeta}>
-                        {stats.games.position} • {stats.team.name} • £
-                        {player.price}
+                        {position} • {player.teamName} • £{player.price}
                       </div>
                     </div>
                     <button
                       className={styles.addButton}
-                      onClick={() => addToTeam(entry, setUserTeam)}
+                      onClick={() => addToTeam(player, setUserTeam)}
                     >
                       +
                     </button>

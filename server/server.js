@@ -7,6 +7,7 @@ const leagueRoutes = require("./leagueRoutes");
 const cors = require("cors");
 const fs = require("fs");
 const path = require("path");
+const Player = require("./models/Player");
 const { json } = require("stream/consumers");
 
 const app = express();
@@ -67,42 +68,26 @@ function setPlayerPrices1(players) {
   });
 }
 
-app.get("/api", (req, res) => {
-  const filePath = path.join(__dirname, "allPlayers.json");
-  fs.readFile(filePath, "utf8", (err, data) => {
-    if (err) {
-      return res.status(500).json({ error: "Failed to read JSON file" });
+app.get("/api/players", async (req, res) => {
+  const { name, position } = req.query;
+
+  try {
+    const filter = {};
+    if (name) {
+      const regex = new RegExp(name, "i");
+      filter.$or = [{ name: regex }, { teamName: regex }];
     }
 
-    try {
-      const jsonData = JSON.parse(data);
-      const players = jsonData.response || [];
-      const processedPlayers = setPlayerPrices1(players);
-      const { name } = req.query;
-      let filteredPlayers = processedPlayers.filter((player) => {
-        if (
-          name &&
-          !player.player.firstname.toLowerCase().includes(name.toLowerCase()) &&
-          name &&
-          !player.player.lastname.toLowerCase().includes(name.toLowerCase()) &&
-          name &&
-          !player.statistics[0].team.name
-            .toLowerCase()
-            .includes(name.toLowerCase())
-        )
-          return false;
-        else return true;
-      });
-
-      const sortedPlayers = [...filteredPlayers].sort(
-        (a, b) => b.player.price - a.player.price
-      );
-
-      res.json({ response: sortedPlayers });
-    } catch (parseError) {
-      res.status(500).json({ error: "Invalid JSON format" });
+    if (position && position !== "All positions") {
+      filter.position = position;
     }
-  });
+    const players = await Player.find(filter).sort({ price: -1 });
+
+    res.json(players);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Server error fetching players " });
+  }
 });
 
 app.listen(5000, () => {
