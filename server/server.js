@@ -68,6 +68,7 @@ function setPlayerPrices1(players) {
   });
 }
 
+console.log("Server started!!!!");
 app.get("/api/players", async (req, res) => {
   const { name, position } = req.query;
 

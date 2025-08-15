@@ -1,4 +1,6 @@
 const express = require("express");
+const mongoose = require("mongoose");
+const { Types } = mongoose;
 const router = express.Router();
 const Team = require("./models/Team");
 const auth = require("./auth");
@@ -8,10 +10,32 @@ router.get("/my-team", auth, async (req, res) => {
   try {
     const team = await Team.findOne({ owner: req.user._id })
       .populate("players.player")
+      .populate("owner", "username")
       .exec();
     res.json(team);
   } catch (error) {
     res.status(500).json({ error: error.message });
+  }
+});
+
+router.get("/:userId", auth, async (req, res) => {
+  try {
+    const { userId } = req.params;
+
+    if (!Types.ObjectId.isValid(userId)) {
+      return res.status(400).json({ error: "Invalid userId" });
+    }
+
+    const team = await Team.findOne({ owner: new Types.ObjectId(userId) })
+      .populate("players.player")
+      .populate("owner", "username _id");
+
+    if (!team) return res.status(404).json({ error: "Team not found" });
+
+    res.json(team);
+  } catch (e) {
+    console.error(e);
+    res.status(500).json({ error: e.message });
   }
 });
 
@@ -140,14 +164,6 @@ router.post("/remove-player", auth, async (req, res) => {
     ).populate("players.player");
 
     if (!team) return res.status(404).json({ error: "Team not found " });
-
-    const teamsWithPlayer = await Team.countDocuments({
-      "players.player": player._id,
-    });
-
-    if (teamsWithPlayer === 0) {
-      await Player.deleteOne({ _id: req.body.player._id });
-    }
 
     res.json(team);
   } catch (error) {

@@ -241,7 +241,7 @@ const Transfers = () => {
                   position === selectedPosition
                 );
               })
-              .map((player, index) => {
+              .map((player) => {
                 const position = player.position || "Unknown";
                 const isInTeam = userTeam?.players?.some(
                   (p) => p.player?.id == player.id
@@ -261,7 +261,8 @@ const Transfers = () => {
                       />
                       <strong>{player.name}</strong>
                       <div className={styles.playerMeta}>
-                        {position} • {player.teamName} • £{player.price}
+                        {position} • {player.teamName} • £
+                        {(player.price / 100).toFixed(1)} • {player.totalPoints}
                       </div>
                     </div>
                     <button

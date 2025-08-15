@@ -44,6 +44,7 @@ root.render(
           </ProtectedRoute>
         }
       />
+      <Route path="/team/:userId" element={<Team />} />
       <Route
         path="/transfers"
         element={

@@ -3,9 +3,16 @@ import styles from "./Transfer.module.css";
 import { useNavigate } from "react-router-dom";
 import pitch from "./images/pitch.png";
 import sans from "./images/sans.png";
+import { addToTeam, removeFromTeam } from "./services/transferServices";
+import {
+  getLastName,
+  saveTeam,
+  groupAndSortPlayers,
+  getPlayerCoordinates,
+} from "./utils/teamUtils";
 
 const CreateTeam = () => {
-  const [backendData, setBackendData] = useState({ response: [] });
+  const [backendData, setBackendData] = useState([]);
   const [query, setQuery] = useState("");
   const [userTeam, setUserTeam] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -47,148 +54,6 @@ const CreateTeam = () => {
     return logos[teamName] || sans;
   };
 
-  const getLastName = (x) => {
-    const lastName = x.split(" ").pop();
-    return lastName;
-  };
-
-  const addToTeam = async (player) => {
-    try {
-      const token = localStorage.getItem("token");
-      const roundedPrice = Math.round(player.player.price * 100);
-
-      const response = await fetch("/api/team/add-player", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({
-          player: {
-            id: player.player.id,
-            name: player.player.name,
-            position: player.statistics[0].games.position,
-            price: roundedPrice,
-            teamName: player.statistics[0].team.name,
-          },
-        }),
-      });
-
-      const result = await response.text();
-      if (!response.ok) {
-        alert("Error: " + JSON.parse(result).error);
-        throw new Error(JSON.parse(result).error || "Failed to add player ");
-      }
-
-      const updatedTeam = JSON.parse(result);
-      setUserTeam(updatedTeam);
-      console.log("Successfully added player to team!");
-    } catch (error) {
-      console.error("Failed to add player:", error);
-    }
-  };
-
-  const removeFromTeam = async (player) => {
-    try {
-      const token = localStorage.getItem("token");
-      const playerId = player.player?._id || player._id;
-      const playerPrice = player.player?.price || player.price;
-
-      const response = await fetch("/api/team/remove-player", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({
-          player: {
-            _id: playerId,
-            price: playerPrice,
-          },
-        }),
-      });
-
-      const result = await response.text();
-      if (!response.ok) {
-        alert("Error: " + JSON.parse(result).error);
-        throw new Error(JSON.parse(result).error || "Failed to remove player ");
-      }
-
-      const updatedTeam = JSON.parse(result);
-      setUserTeam(updatedTeam);
-      console.log("Successfully removed player from team!");
-    } catch (error) {
-      console.error("Failed to remove player:", error);
-    }
-  };
-
-  const saveTeam = () => {
-    if (userTeam?.players?.length >= 15) {
-      navigate("/");
-    } else {
-      alert(
-        `You need ${
-          15 - (userTeam?.players?.length || 0)
-        } more players to complete your team!`
-      );
-    }
-  };
-
-  const groupAndSortPlayers = (players = []) => {
-    const positionOrder = {
-      Goalkeeper: 0,
-      Defender: 1,
-      Midfielder: 2,
-      Attacker: 3,
-    };
-
-    const grouped = players.reduce((acc, entry) => {
-      if (!entry.player || !entry.player.position) return acc;
-
-      const position = entry.player.position;
-      if (!acc[position]) acc[position] = [];
-
-      acc[position].push({
-        ...entry.player,
-        isSubstitute: entry.isSubstitute,
-        isCaptain: entry.isCaptain,
-        playerId: entry.player._id,
-        _id: entry._id,
-      });
-
-      return acc;
-    }, {});
-
-    Object.keys(grouped).forEach((position) => {
-      grouped[position].sort((a, b) => {
-        if (b.price !== a.price) {
-          return b.price - a.price;
-        }
-        return a.name.localeCompare(b.name);
-      });
-    });
-
-    return Object.entries(grouped).sort(
-      ([aPos], [bPos]) => positionOrder[aPos] - positionOrder[bPos]
-    );
-  };
-
-  const getPlayerCoordinates = (position, index, total) => {
-    const yMap = {
-      Goalkeeper: "10%",
-      Defender: "32%",
-      Midfielder: "53%",
-      Attacker: "80%",
-    };
-
-    const y = yMap[position] || "50%";
-
-    const spacing = 100 / (total + 1);
-    const x = `${spacing * (index + 1)}%`;
-
-    return { top: y, left: x };
-  };
-
   useEffect(() => {
     const token = localStorage.getItem("token");
     if (!token) {
@@ -201,7 +66,7 @@ const CreateTeam = () => {
   useEffect(() => {
     const fetchPlayers = async () => {
       try {
-        const response = await fetch(`/api?name=${query}`);
+        const response = await fetch(`/api/players?name=${query}`);
         const data = await response.json();
         setBackendData(data);
       } catch (error) {
@@ -249,7 +114,10 @@ const CreateTeam = () => {
             <h2>
               Your budget: {parseFloat((userTeam.budget / 100).toFixed(2))}
             </h2>
-            <button className={styles.saveTeam} onClick={() => saveTeam()}>
+            <button
+              className={styles.saveTeam}
+              onClick={() => saveTeam(userTeam, navigate)}
+            >
               Save team
             </button>
             <h2>Starters</h2>
@@ -359,42 +227,41 @@ const CreateTeam = () => {
           )}
         </div>
         <div className={styles.playerCardList}>
-          {backendData.response
-            .filter((entry) => {
-              const position = entry.statistics[0].games.position;
+          {backendData
+            .filter((player) => {
+              const position = player.position || "Unknown";
               return (
                 selectedPosition === "All Positions" ||
                 position === selectedPosition
               );
             })
-            .map((entry, index) => {
-              const player = entry.player;
-              const stats = entry.statistics[0];
+            .map((player) => {
+              const position = player.position || "Unknown";
               const isInTeam = userTeam?.players?.some(
                 (p) => p.player?.id == player.id
               );
 
               return (
                 <div
-                  key={index}
+                  key={player._id}
                   className={`${styles.playerCard} ${
                     isInTeam ? styles.disabledCard : ""
                   }`}
                 >
                   <div className={styles.playerInfo}>
                     <img
-                      src={getTeamLogo(stats.team.name)}
+                      src={getTeamLogo(player.teamName)}
                       className={styles.clubLogo}
                     />
                     <strong>{player.name}</strong>
                     <div className={styles.playerMeta}>
-                      {stats.games.position} • {stats.team.name} • £
-                      {player.price}
+                      {position} • {player.teamName} • £
+                      {(player.price / 100).toFixed(1)} • {player.totalPoints}
                     </div>
                   </div>
                   <button
                     className={styles.addButton}
-                    onClick={() => addToTeam(entry)}
+                    onClick={() => addToTeam(player, setUserTeam)}
                   >
                     +
                   </button>
@@ -419,7 +286,7 @@ const CreateTeam = () => {
             {modalOpenForPlayer && (
               <button
                 onClick={() => {
-                  removeFromTeam(modalOpenForPlayer);
+                  removeFromTeam(modalOpenForPlayer, setUserTeam);
 
                   setModalOpenForPlayer(null);
                 }}

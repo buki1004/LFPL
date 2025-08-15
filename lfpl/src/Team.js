@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import styles from "./Team.module.css";
 import { useNavigate } from "react-router-dom";
+import { jwtDecode } from "jwt-decode";
 import pitch from "./images/pitch.png";
 import { makeCaptain, makeSubstitute } from "./services/teamServices";
 import { fetchAndSetUserLeagues } from "./services/leagueServices";
@@ -14,6 +15,7 @@ import {
 
 const Team = () => {
   const [userTeam, setUserTeam] = useState(null);
+  const [viewingOther, setViewingOther] = useState(false);
   const [userPoints, setUserPoints] = useState(0);
   const [totalPoints, setTotalPoints] = useState(0);
   const [userLeagues, setUserLeagues] = useState([]);
@@ -35,6 +37,7 @@ const Team = () => {
     "Manchester United": require("./images/Manchester United.png"),
     Newcastle: require("./images/Newcastle.png"),
     Nottingham: require("./images/Nottingham.png"),
+    "Nottingham Forest": require("./images/Nottingham.png"),
     Tottenham: require("./images/Tottenham.png"),
     "West Ham": require("./images/West Ham.png"),
     Wolves: require("./images/Wolves.png"),
@@ -42,6 +45,35 @@ const Team = () => {
 
   const getTeamLogo = (teamName) => {
     return logos[teamName];
+  };
+
+  const viewOtherTeam = async (otherUserId) => {
+    const token = localStorage.getItem("token");
+    let currentUserId = null;
+    if (!token) {
+      navigate("/login");
+      return;
+    }
+
+    const decoded = jwtDecode(token);
+    currentUserId = decoded._id;
+
+    console.log("Fetching for:", otherUserId);
+    try {
+      const res = await fetch(`/api/team/${otherUserId}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+
+      if (!res.ok) throw new Error(`Failed to fetch team: ${res.status}`);
+
+      const teamData = await res.json();
+      setUserTeam(teamData);
+      setUserPoints(teamData.gameweekPoints ?? 0);
+      setTotalPoints(teamData.totalPoints ?? 0);
+      setViewingOther(teamData.owner._id !== currentUserId);
+    } catch (error) {
+      console.error("Failed to fetch other user team:", error);
+    }
   };
 
   useEffect(() => {
@@ -91,7 +123,7 @@ const Team = () => {
     <div className={styles.layoutContainer}>
       {userTeam ? (
         <div className={styles.accountList}>
-          <h1>My Team</h1>
+          <h1>{userTeam.owner.username}'s team</h1>
           <h2>
             GW points: {userPoints} Total points: {totalPoints}
           </h2>
@@ -117,8 +149,13 @@ const Team = () => {
                   <div
                     key={player._id}
                     className={styles.playerMarker}
-                    style={{ top: coordinates.top, left: coordinates.left }}
+                    style={{
+                      top: coordinates.top,
+                      left: coordinates.left,
+                      cursor: viewingOther ? "default" : "pointer",
+                    }}
                     onClick={() =>
+                      !viewingOther &&
                       setModalOpenForPlayer(
                         userTeam.players.find(
                           (p) => p.player._id === player.playerId
@@ -155,7 +192,8 @@ const Team = () => {
                 <div
                   key={player.player._id}
                   className={styles.subCard}
-                  onClick={() => setModalOpenForPlayer(player)}
+                  onClick={() => !viewingOther && setModalOpenForPlayer(player)}
+                  style={{ cursor: viewingOther ? "default" : "pointer" }}
                 >
                   <img
                     src={getTeamLogo(player.player.teamName)}
@@ -270,7 +308,13 @@ const Team = () => {
                   <strong>Standings:</strong>
                   <ol>
                     {league.members.map((member, idx) => (
-                      <li key={member.user._id || idx}>
+                      <li
+                        key={member.user._id || idx}
+                        style={{
+                          cursor: "pointer",
+                        }}
+                        onClick={() => viewOtherTeam(member.user._id)}
+                      >
                         {member.user?.username || "Unknown"} —{" "}
                         {member.team?.totalPoints ?? 0} pts
                       </li>

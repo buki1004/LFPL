@@ -18,21 +18,31 @@ mongoose
       const stats = player.statistics || {};
 
       if (pos === "Goalkeeper") {
-        newPrice = Math.round((stats.saves * 0.02 + 4) * 10) / 10;
+        newPrice = Math.round(
+          (Math.round((stats.saves * 0.02 + 4) * 10) / 10) * 100
+        );
       } else if (pos === "Defender") {
-        newPrice = Math.round((stats.interceptions * 0.05 + 4) * 10) / 10;
+        newPrice = Math.round(
+          (Math.round((stats.interceptions * 0.05 + 4) * 10) / 10) * 100
+        );
       } else if (pos === "Midfielder") {
-        newPrice =
-          Math.round(
+        newPrice = Math.round(
+          (Math.round(
             (stats.goals * 0.1 +
               stats.assists * 0.05 +
               stats.keyPasses * 0.02 +
               4) *
               10
-          ) / 10;
+          ) /
+            10) *
+            100
+        );
       } else if (pos === "Attacker") {
-        newPrice =
-          Math.round((stats.goals * 0.2 + stats.assists * 0.1 + 4) * 10) / 10;
+        newPrice = Math.round(
+          (Math.round((stats.goals * 0.2 + stats.assists * 0.1 + 4) * 10) /
+            10) *
+            100
+        );
       }
 
       if (player.price !== newPrice) {

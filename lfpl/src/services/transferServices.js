@@ -3,9 +3,8 @@ export async function addToTeam(playerEntry, setUserTeam) {
     const token = localStorage.getItem("token");
 
     const playerData = playerEntry.player || playerEntry;
-    const stats = playerEntry.statistics?.[0] || {};
 
-    const roundedPrice = Math.round(playerData.price * 100);
+    const roundedPrice = Math.round(playerData.price);
 
     const response = await fetch("/api/team/add-player", {
       method: "POST",
@@ -17,9 +16,9 @@ export async function addToTeam(playerEntry, setUserTeam) {
         player: {
           id: playerData.id,
           name: playerData.name,
-          position: stats.games?.position,
+          position: playerData.position,
           price: roundedPrice,
-          teamName: stats.team?.name,
+          teamName: playerData.teamName,
         },
       }),
     });
