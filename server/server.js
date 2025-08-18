@@ -1,3 +1,4 @@
+require("dotenv").config();
 const express = require("express");
 const mongoose = require("mongoose");
 const authRoutes = require("./authRoutes");
@@ -16,7 +17,7 @@ app.use(cors());
 app.use(express.json());
 
 mongoose
-  .connect("mongodb://localhost:27017/fpl", {
+  .connect(process.env.MONGO_URI, {
     useNewUrlParser: true,
     useUnifiedTopology: true,
   })
