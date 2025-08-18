@@ -186,9 +186,9 @@ router.post("/make-captain", auth, async (req, res) => {
       { $set: { "players.$.isCaptain": true } }
     );
 
-    const updatedTeam = await Team.findOne({ owner: req.user._id }).populate(
-      "players.player"
-    );
+    const updatedTeam = await Team.findOne({ owner: req.user._id })
+      .populate("players.player")
+      .populate("owner");
 
     res.json(updatedTeam);
   } catch (error) {
@@ -252,9 +252,9 @@ router.post("/substitute", auth, async (req, res) => {
 
     await team.save();
 
-    const updatedTeam = await Team.findOne({ owner: req.user._id }).populate(
-      "players.player"
-    );
+    const updatedTeam = await Team.findOne({ owner: req.user._id })
+      .populate("players.player")
+      .populate("owner");
     res.json(updatedTeam);
   } catch (error) {
     console.error("Error in substituting player: ", error);

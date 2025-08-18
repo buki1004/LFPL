@@ -19,30 +19,38 @@ mongoose
 
       if (pos === "Goalkeeper") {
         newPrice = Math.round(
-          (Math.round((stats.saves * 0.02 + 4) * 10) / 10) * 100
+          (Math.round((stats.saves * 0.8 + 4) * 10) / 10) * 100
         );
       } else if (pos === "Defender") {
         newPrice = Math.round(
-          (Math.round((stats.interceptions * 0.05 + 4) * 10) / 10) * 100
+          (Math.round((stats.interceptions * 0.5 + 4) * 10) / 10) * 100
         );
       } else if (pos === "Midfielder") {
-        newPrice = Math.round(
-          (Math.round(
-            (stats.goals * 0.1 +
-              stats.assists * 0.05 +
-              stats.keyPasses * 0.02 +
-              4) *
-              10
-          ) /
-            10) *
-            100
-        );
+        if (player.price == "400") {
+          newPrice = 450;
+        } else {
+          newPrice = Math.round(
+            (Math.round(
+              (stats.goals * 1.2 +
+                stats.assists * 0.6 +
+                stats.keyPasses * 0.2 +
+                4) *
+                10
+            ) /
+              10) *
+              100
+          );
+        }
       } else if (pos === "Attacker") {
-        newPrice = Math.round(
-          (Math.round((stats.goals * 0.2 + stats.assists * 0.1 + 4) * 10) /
-            10) *
-            100
-        );
+        if (player.price == "400") {
+          newPrice = 450;
+        } else {
+          newPrice = Math.round(
+            (Math.round((stats.goals * 1.5 + stats.assists * 0.75 + 4) * 10) /
+              10) *
+              100
+          );
+        }
       }
 
       if (player.price !== newPrice) {

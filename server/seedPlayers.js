@@ -9,7 +9,7 @@ mongoose.connect("mongodb://localhost:27017/fpl", {
 
 async function seedPlayers() {
   try {
-    const raw = fs.readFileSync("allPlayers.json");
+    const raw = fs.readFileSync("allPlayersNew.json");
     const json = JSON.parse(raw);
 
     const playersToInsert = json.response.map((p) => {

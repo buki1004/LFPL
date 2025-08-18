@@ -103,7 +103,7 @@ const League = () => {
               <li key={league._id} className={styles.leagueItem}>
                 <div className={styles.leagueHeader}>
                   <strong>{league.name}</strong>
-                  {userTeam?.owner === league.createdBy._id && (
+                  {userTeam?.owner._id === league.createdBy._id && (
                     <button
                       className={styles.leagueBtn}
                       onClick={() => copyCode(league.code)}
@@ -118,7 +118,7 @@ const League = () => {
                   <ol>
                     {league.members.map((member, idx) => (
                       <li key={member.user._id || idx}>
-                        {member.user?.username || "Unknown"} —{" "}
+                        {member.team?.name || "Unknown"} —{" "}
                         {member.team?.totalPoints ?? 0} pts
                       </li>
                     ))}
