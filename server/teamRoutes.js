@@ -18,6 +18,11 @@ router.get("/my-team", auth, async (req, res) => {
   }
 });
 
+router.get("/totw", async (req, res) => {
+  try {
+  } catch (err) {}
+});
+
 router.get("/:userId", auth, async (req, res) => {
   try {
     const { userId } = req.params;

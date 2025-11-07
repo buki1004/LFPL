@@ -3,8 +3,11 @@ require("dotenv").config();
 const mongoose = require("mongoose");
 const Player = require("./models/Player");
 const fixtures = require("./allFixtures.json");
+const fs = require("fs");
+const path = require("path");
+const fixturesPath = path.join(__dirname, "allFixtures.json");
 
-function calculatePoints(playerStats, position, fixture) {
+function calculatePoints(playerStats, position, fixture, teamName) {
   if (!playerStats || !playerStats.games) {
     return 0;
   }
@@ -21,18 +24,12 @@ function calculatePoints(playerStats, position, fixture) {
 
   points += (playerStats.goals.assists || 0) * 3;
 
-  const goalsConceded =
-    position === "G" || position === "D"
-      ? fixture.goals.home === 0 &&
-        playerStats.teamName === fixture.teams.home.name
-        ? 4
-        : fixture.goals.away === 0 &&
-          playerStats.teamName === fixture.teams.away.name
-        ? 4
-        : 0
-      : 0;
+  if (position === "G" || position === "D") {
+    const isHome = teamName === fixture.teams.home.name;
 
-  points += goalsConceded;
+    if (isHome && fixture.goals.away === 0) points += 4;
+    else if (!isHome && fixture.goals.home === 0) points += 4;
+  }
 
   points -= playerStats.cards.yellow || 0;
   points -= (playerStats.cards.red || 0) * 3;
@@ -41,51 +38,89 @@ function calculatePoints(playerStats, position, fixture) {
 }
 
 async function updatePlayerPoints() {
-  const finishedFixtures = fixtures.response.filter(
-    (fix) => fix.fixture.status.short === "FT"
+  const unprocessedFixtures = fixtures.response.filter(
+    (fix) =>
+      fix.fixture.status.short === "FT" &&
+      !fix.fixture.status.short.includes("-processed")
   );
 
-  for (const fix of finishedFixtures) {
-    const fixtureId = fix.fixture.id;
+  if (unprocessedFixtures.length === 0) {
+    console.log("No new finished fixtures to process.");
+    return;
+  }
 
-    console.log(`Processing fixture ${fix.fixture.id}...`);
+  for (const fix of unprocessedFixtures) {
+    const fixtureId = fix.fixture.id;
+    console.log(`\nProcessing fixture ${fixtureId}...`);
+
+    let roundNumber = null;
+    if (fix.league.round) {
+      const match = fix.league.round.match(/(\d+)$/);
+      if (match) {
+        roundNumber = parseInt(match[1], 10);
+      }
+    }
 
     let data;
-
     try {
       const res = await fetch(
         `https://v3.football.api-sports.io/fixtures/players?fixture=${fixtureId}`,
         {
           method: "GET",
-          headers: {
-            "x-rapidapi-key": process.env.API_KEY,
-          },
+          headers: { "x-rapidapi-key": process.env.API_KEY },
         }
       );
       data = await res.json();
-      if (!data.response) {
-        console.log(`No data for fixture ${fixtureId}`);
+      if (!data.response || data.response.length === 0) {
+        console.log(
+          `No player data for fixture ${fixtureId}. Full response:`,
+          data
+        );
         continue;
       }
     } catch (err) {
       console.error(`Error fetching fixture ${fixtureId}:`, err);
       continue;
     }
-    if (!data.response) continue;
+
+    let anyPlayerUpdated = false;
+    let updatedPlayersCount = 0;
+    const saveOps = [];
 
     for (const team of data.response) {
       for (const p of team.players) {
         const stats = p.statistics[0];
-        if (!stats) continue;
+        if (!stats) {
+          console.log(`Skipping player ${p.player.id}: no stats available`);
+          continue;
+        }
+
         const playerId = p.player.id;
         const position = stats.games.position;
-        if (!position) continue;
+        if (!position) {
+          console.log(`Skipping player ${playerId}: missing position`);
+          continue;
+        }
 
         const playerInDb = await Player.findOne({ id: playerId });
-        if (!playerInDb) continue;
+        if (!playerInDb) {
+          console.log(`Player not found in DB: ${playerId}`);
+          continue;
+        }
+
+        if (
+          roundNumber !== null &&
+          (playerInDb.statistics.appearances || 0) >= roundNumber
+        ) {
+          console.log(
+            `Skipping player ${playerInDb.name || playerId} (apps=${
+              playerInDb.statistics.appearances
+            }, round=${roundNumber})`
+          );
+          continue;
+        }
 
         playerInDb.gameweekPoints = 0;
-
         playerInDb.statistics.appearances =
           (playerInDb.statistics.appearances || 0) +
           (stats.games.minutes > 0 ? 1 : 0);
@@ -119,16 +154,50 @@ async function updatePlayerPoints() {
 
         playerInDb.teamName = team.team.name;
 
-        const points = calculatePoints(stats, position, fix);
-
+        const points = calculatePoints(stats, position, fix, team.team.name);
         playerInDb.gameweekPoints = points;
         playerInDb.totalPoints += points;
-        await playerInDb.save();
+
+        saveOps.push(playerInDb.save());
+        anyPlayerUpdated = true;
+        updatedPlayersCount++;
+
+        console.log(
+          `Updated player: ${playerInDb.name || playerId}, team: ${
+            team.team.name
+          }, GW points: ${points}`
+        );
       }
+    }
+
+    await Promise.all(saveOps);
+
+    const homeTeam = fix.teams.home.name;
+    const awayTeam = fix.teams.away.name;
+    const homeGoals = fix.goals.home;
+    const awayGoals = fix.goals.away;
+
+    if (anyPlayerUpdated) {
+      const localFix = fixtures.response.find(
+        (f) => f.fixture.id === fixtureId
+      );
+      if (localFix) {
+        localFix.fixture.status.short += "-processed";
+        localFix.fixture.status.long += "-processed";
+      }
+      console.log(
+        `Fixture ${fixtureId} (${homeTeam} ${homeGoals}:${awayGoals} ${awayTeam}) processed successfully. Total players updated: ${updatedPlayersCount}`
+      );
+    } else {
+      console.log(
+        `No players updated for fixture ${fixtureId} (${homeTeam} ${homeGoals}:${awayGoals} ${awayTeam}), fixture will remain unprocessed`
+      );
     }
   }
 
-  console.log("Player points updated for finished fixtures!");
+  fs.writeFileSync(fixturesPath, JSON.stringify(fixtures, null, 2));
+
+  console.log("Player points updated and fixtures marked as processed!");
 }
 
 mongoose
@@ -139,7 +208,7 @@ mongoose
   .then(async () => {
     console.log("Connected to MongoDB");
     await updatePlayerPoints();
-    mongoose.connection.close();
+    await mongoose.connection.close();
   })
   .catch((err) => {
     console.error("Error connecting to MongoDB:", err);

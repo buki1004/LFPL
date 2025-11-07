@@ -13,7 +13,7 @@ async function seedPlayers() {
     const json = JSON.parse(raw);
 
     const playersToInsert = json.response.map((p) => {
-      const stats = p.statistics[0]; // first stats object
+      const stats = p.statistics[0];
       return {
         id: p.player.id,
         name: p.player.name,
@@ -41,7 +41,6 @@ async function seedPlayers() {
       };
     });
 
-    // Clear old data and insert new
     await Player.deleteMany({});
     await Player.insertMany(playersToInsert);
 
