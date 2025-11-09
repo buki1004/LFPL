@@ -1,13 +1,42 @@
 import React, { useEffect, useState } from "react";
 import "./App.css";
 import { useNavigate } from "react-router-dom";
+import styles from "./App.module.css";
+import pitch from "./images/pitch.png";
+import { getLastName, getPlayerCoordinates } from "./utils/teamUtils";
 
 const App = () => {
   const [userTeam, setUserTeam] = useState(null);
+  const [teamOfTheWeek, setTeamOfTheWeek] = useState(null);
   const [userPoints, setUserPoints] = useState(0);
   const [totalPoints, setTotalPoints] = useState(0);
   const [modalOpenForPlayer, setModalOpenForPlayer] = useState(null);
   const navigate = useNavigate();
+
+  const logos = {
+    Arsenal: require("./images/Arsenal.png"),
+    "Aston Villa": require("./images/Aston Villa.png"),
+    Bournemouth: require("./images/Bournemouth.png"),
+    Brentford: require("./images/Brentford.png"),
+    Brighton: require("./images/Brighton.png"),
+    Chelsea: require("./images/Chelsea.png"),
+    "Crystal Palace": require("./images/Crystal Palace.png"),
+    Everton: require("./images/Everton.png"),
+    Fulham: require("./images/Fulham.png"),
+    Liverpool: require("./images/Liverpool.png"),
+    "Manchester City": require("./images/Manchester City.png"),
+    "Manchester United": require("./images/Manchester United.png"),
+    Newcastle: require("./images/Newcastle.png"),
+    Nottingham: require("./images/Nottingham.png"),
+    "Nottingham Forest": require("./images/Nottingham.png"),
+    Tottenham: require("./images/Tottenham.png"),
+    "West Ham": require("./images/West Ham.png"),
+    Wolves: require("./images/Wolves.png"),
+  };
+
+  const getTeamLogo = (teamName) => {
+    return logos[teamName];
+  };
 
   const removeFromTeam = async (player) => {
     try {
@@ -196,25 +225,29 @@ const App = () => {
       if (!token) return;
 
       try {
-        const [teamResponse, pointsResponse] = await Promise.all([
-          fetch("/api/team/my-team", {
-            headers: { Authorization: `Bearer ${token}` },
-          }),
-          fetch("/api/fetchPoints", {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: `Bearer ${token}`,
-            },
-          }),
-        ]);
+        const [teamResponse, teamOfTheWeekResponse, pointsResponse] =
+          await Promise.all([
+            fetch("/api/team/my-team", {
+              headers: { Authorization: `Bearer ${token}` },
+            }),
+            fetch("/api/team/totw"),
+            fetch("/api/fetchPoints", {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${token}`,
+              },
+            }),
+          ]);
 
-        const [teamData, pointsData] = await Promise.all([
+        const [teamData, teamOfTheWeekData, pointsData] = await Promise.all([
           teamResponse.json(),
+          teamOfTheWeekResponse.json(),
           pointsResponse.json(),
         ]);
 
         setUserTeam(teamData);
+        setTeamOfTheWeek(teamOfTheWeekData);
         setUserPoints(pointsData.gameweekPoints);
         setTotalPoints(pointsData.totalPoints);
       } catch (error) {
@@ -226,7 +259,7 @@ const App = () => {
   }, []);
 
   return (
-    <div>
+    <div className={styles.layoutContainer}>
       <div className="accountList">
         <h1>My Team</h1>
         <button onClick={() => handleLogout()}>Logout</button>
@@ -309,6 +342,69 @@ const App = () => {
           </div>
         ) : (
           <p>No team yet! Add players above.</p>
+        )}
+      </div>
+      <div className={styles.accountList}>
+        <h1>Team of the week</h1>
+        {!teamOfTheWeek ? (
+          <p>Loading Team of the Week...</p>
+        ) : (
+          <>
+            <h2>Best lineup this gameweek</h2>
+            <div className={styles.pitchContainer}>
+              <img src={pitch} className={styles.pitchImage} />
+              {groupAndSortPlayers(
+                teamOfTheWeek.players.filter((p) => !p.isSubstitute)
+              ).flatMap(([position, players]) =>
+                players.map((player, idx) => {
+                  const coords = getPlayerCoordinates(
+                    position,
+                    idx,
+                    players.length
+                  );
+                  return (
+                    <div
+                      key={player._id}
+                      className={styles.playerMarker}
+                      style={{ top: coords.top, left: coords.left }}
+                    >
+                      <img
+                        src={getTeamLogo(player.teamName)}
+                        className={styles.teamLogo}
+                      />
+                      <div className={styles.playerName}>
+                        {getLastName(player.name)}
+                      </div>
+                      <div className={styles.playerPoints}>
+                        {player.gameweekPoints}
+                      </div>
+                    </div>
+                  );
+                })
+              )}
+            </div>
+
+            <h2>Substitutes</h2>
+            <div className={styles.subContainer}>
+              {teamOfTheWeek.players
+                .filter((p) => p.isSubstitute)
+                .map((player) => (
+                  <div key={player.player._id} className={styles.subCard}>
+                    <img
+                      src={getTeamLogo(player.player.teamName)}
+                      className={styles.teamLogo}
+                    />
+                    <div className={styles.playerName}>
+                      {getLastName(player.player.name)}
+                    </div>
+                    <div className={styles.playerPoints}>
+                      {player.player.gameweekPoints}
+                    </div>
+                    <div>{player.player.position.substring(0, 3)}</div>
+                  </div>
+                ))}
+            </div>
+          </>
         )}
       </div>
       {modalOpenForPlayer && (

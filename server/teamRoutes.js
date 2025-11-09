@@ -20,7 +20,76 @@ router.get("/my-team", auth, async (req, res) => {
 
 router.get("/totw", async (req, res) => {
   try {
-  } catch (err) {}
+    const allPlayers = await Player.find().sort({ gameweekPoints: -1 });
+
+    const positionLimits = {
+      Goalkeeper: 2,
+      Defender: 5,
+      Midfielder: 5,
+      Attacker: 3,
+    };
+
+    const positionMinimums = {
+      Goalkeeper: 1,
+      Defender: 3,
+      Midfielder: 3,
+      Attacker: 1,
+    };
+
+    const positionCounts = {
+      Goalkeeper: 0,
+      Defender: 0,
+      Midfielder: 0,
+      Attacker: 0,
+    };
+
+    const totalMax = 11;
+    const totalSquad = 15;
+
+    const team = {
+      players: [],
+    };
+
+    for (const player of allPlayers) {
+      const pos = player.position;
+      const currentTotal = team.players.filter((p) => !p.isSubstitute).length;
+
+      if (currentTotal >= totalMax) break;
+
+      if (positionCounts[pos] < positionLimits[pos]) {
+        team.players.push({
+          player,
+          isSubstitute: false,
+        });
+        positionCounts[pos]++;
+      }
+    }
+
+    const starterIds = new Set(
+      team.players.map((p) => p.player._id.toString())
+    );
+    const remainingPlayers = allPlayers.filter(
+      (p) => !starterIds.has(p._id.toString())
+    );
+
+    for (const player of remainingPlayers) {
+      if (team.players.length >= totalSquad) break;
+
+      const pos = player.position;
+      if (positionCounts[pos] < positionLimits[pos]) {
+        team.players.push({
+          player,
+          isSubstitute: true,
+        });
+        positionCounts[pos]++;
+      }
+    }
+
+    res.json(team);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: err.message });
+  }
 });
 
 router.get("/:userId", auth, async (req, res) => {
