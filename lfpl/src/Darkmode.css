@@ -8,7 +8,8 @@ body.dark-mode [class*="accountList"],
 body.dark-mode [class*="playerList"],
 body.dark-mode [class*="leagueList"],
 body.dark-mode [class*="leagueActions"],
-body.dark-mode [class*="signupForm"] {
+body.dark-mode [class*="signupForm"],
+body.dark-mode [class*="fixturesContainer"] {
   background-color: #323339 !important;
   border: 1px solid gainsboro !important;
 }
@@ -19,22 +20,28 @@ body.dark-mode [class*="dropdownList"],
 body.dark-mode [class*="modalContent"],
 body.dark-mode [class*="playerName"],
 body.dark-mode [class*="subCard"],
-body.dark-mode [class*="dropdownItem"] {
+body.dark-mode [class*="dropdownItem"],
+body.dark-mode [class*="fixtureCard"] {
   background-color: #4a4650 !important;
   color: #ffffff !important;
   border-color: #5a5560 !important;
 }
 
-body.dark-mode [class*="playerPoints"] {
-  background-color: #38343c;
+body.dark-mode [class*="playerPoints"],
+body.dark-mode [class*="fixtureScore"] {
+  background-color: #38343c !important;
+  color: #ffffff !important;
 }
 
-body.dark-mode [class*="playerMeta"] {
+body.dark-mode [class*="playerMeta"],
+body.dark-mode [class*="fixtureTeam"] {
   color: #ffffff !important;
 }
 
 body.dark-mode [class*="subCard"],
-body.dark-mode [class*="subCard"] {
+body.dark-mode [class*="subCard"],
+body.dark-mode [class*="fixtureCard"],
+body.dark-mode [class*="fixtureScore"] {
   transition: none !important;
   animation: none !important;
 }
@@ -42,7 +49,8 @@ body.dark-mode [class*="subCard"] {
 body.dark-mode [class*="playerCard"]:hover,
 body.dark-mode [class*="dropdownItem"]:hover,
 body.dark-mode [class*="subCard"]:hover,
-body.dark-mode [class*="subCard"]:hover [class*="playerName"] {
+body.dark-mode [class*="subCard"]:hover [class*="playerName"],
+body.dark-mode [class*="fixtureCard"]:hover {
   background-color: #5a5560 !important;
   transition: none !important;
 }
@@ -70,14 +78,18 @@ body.dark-mode [class*="leagueInput"] {
 
 body.dark-mode [class*="saveTeam"],
 body.dark-mode [class*="modalButton"],
-body.dark-mode [class*="addButton"] {
+body.dark-mode [class*="addButton"],
+body.dark-mode .forwardBackButton,
+body.dark-mode .gameweekHeader {
   background-color: #00cc6a !important;
   color: #000 !important;
 }
 
 body.dark-mode [class*="saveTeam"]:hover,
 body.dark-mode [class*="modalButton"]:hover,
-body.dark-mode [class*="addButton"]:hover {
+body.dark-mode [class*="addButton"]:hover,
+body.dark-mode .forwardBackButton:hover,
+body.dark-mode .gameweekHeader:hover {
   background-color: #00b45d !important;
 }
 

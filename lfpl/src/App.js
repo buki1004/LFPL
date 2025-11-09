@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useMemo } from "react";
 import "./App.css";
 import { useNavigate } from "react-router-dom";
 import styles from "./App.module.css";
@@ -6,11 +6,10 @@ import pitch from "./images/pitch.png";
 import { getLastName, getPlayerCoordinates } from "./utils/teamUtils";
 
 const App = () => {
-  const [userTeam, setUserTeam] = useState(null);
   const [teamOfTheWeek, setTeamOfTheWeek] = useState(null);
-  const [userPoints, setUserPoints] = useState(0);
-  const [totalPoints, setTotalPoints] = useState(0);
-  const [modalOpenForPlayer, setModalOpenForPlayer] = useState(null);
+  const [fixtures, setFixtures] = useState([]);
+  const [loadingFixtures, setLoadingFixtures] = useState(true);
+  const [currentRoundIndex, setCurrentRoundIndex] = useState(0);
   const navigate = useNavigate();
 
   const logos = {
@@ -19,16 +18,19 @@ const App = () => {
     Bournemouth: require("./images/Bournemouth.png"),
     Brentford: require("./images/Brentford.png"),
     Brighton: require("./images/Brighton.png"),
+    Burnley: require("./images/Burnley.png"),
     Chelsea: require("./images/Chelsea.png"),
     "Crystal Palace": require("./images/Crystal Palace.png"),
     Everton: require("./images/Everton.png"),
     Fulham: require("./images/Fulham.png"),
+    Leeds: require("./images/Leeds.png"),
     Liverpool: require("./images/Liverpool.png"),
     "Manchester City": require("./images/Manchester City.png"),
     "Manchester United": require("./images/Manchester United.png"),
     Newcastle: require("./images/Newcastle.png"),
     Nottingham: require("./images/Nottingham.png"),
     "Nottingham Forest": require("./images/Nottingham.png"),
+    Sunderland: require("./images/Sunderland.png"),
     Tottenham: require("./images/Tottenham.png"),
     "West Ham": require("./images/West Ham.png"),
     Wolves: require("./images/Wolves.png"),
@@ -38,36 +40,22 @@ const App = () => {
     return logos[teamName];
   };
 
-  const removeFromTeam = async (player) => {
-    try {
-      const token = localStorage.getItem("token");
+  const getMostRecentProcessedRoundIndex = (grouped) => {
+    const rounds = Object.keys(grouped);
+    const sortedRounds = rounds.sort((a, b) => {
+      const numA = parseInt(a.split(" - ")[1]);
+      const numB = parseInt(b.split(" - ")[1]);
+      return numA - numB;
+    });
 
-      const response = await fetch("/api/team/remove-player", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({
-          player: {
-            _id: player.playerId,
-            price: player.price,
-          },
-        }),
-      });
-
-      const result = await response.text();
-      if (!response.ok) {
-        alert("Error: " + JSON.parse(result).error);
-        throw new Error(JSON.parse(result).error || "Failed to remove player ");
+    for (let i = sortedRounds.length - 1; i >= 0; i--) {
+      const fixtures = grouped[sortedRounds[i]];
+      if (fixtures.some((f) => f.fixture.status.short?.includes("FT"))) {
+        return i;
       }
-
-      const updatedTeam = JSON.parse(result);
-      setUserTeam(updatedTeam);
-      console.log("Successfully removed player from team!");
-    } catch (error) {
-      console.error("Failed to remove player:", error);
     }
+
+    return sortedRounds.length - 1;
   };
 
   const handleLogout = async () => {
@@ -85,24 +73,6 @@ const App = () => {
       navigate("/login");
     } catch (error) {
       console.error("Logout failed: ", error);
-    }
-  };
-
-  const simulatePoints = async () => {
-    try {
-      const token = localStorage.getItem("token");
-      const response = await fetch("/api/pointsTest", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-      });
-      const data = await response.json();
-      setUserPoints(data.gameweekPoints);
-      setTotalPoints(data.totalPoints);
-    } catch (error) {
-      console.error("Simulation failed: ", error);
     }
   };
 
@@ -145,79 +115,48 @@ const App = () => {
     );
   };
 
-  const makeCaptain = async (player) => {
-    try {
-      const token = localStorage.getItem("token");
-      const response = await fetch("/api/team/make-captain", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({ playerId: player.player._id }),
-      });
-
-      if (!response.ok) throw new Error("Failed to set captain");
-
-      const updatedTeam = await response.json();
-      setUserTeam(updatedTeam);
-    } catch (error) {
-      console.log("Error");
-    }
-  };
-
-  const makeSubstitute = async (player) => {
-    try {
-      const token = localStorage.getItem("token");
-      const response = await fetch("/api/team/substitute", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({ playerId: player.player._id }),
-      });
-
-      if (!response.ok) throw new Error("Failed to make substitute");
-
-      console.log("Succes at doing sub");
-      const updatedTeam = await response.json();
-      setUserTeam(updatedTeam);
-    } catch (error) {
-      console.log("Not good");
-    }
-  };
-
-  const saveTeam = () => {
-    const positions = {
-      Goalkeeper: 0,
-      Defender: 0,
-      Midfielder: 0,
-      Attacker: 0,
-    };
-
-    userTeam.players.forEach((p) => {
-      if (!p.isSubstitute) {
-        const pos = p.player.position;
-        if (pos in positions) {
-          positions[pos]++;
-        }
+  useEffect(() => {
+    const fetchFixtures = async () => {
+      try {
+        const res = await fetch("/api/fixtures");
+        const data = await res.json();
+        console.log("Fixtures response:", data);
+        setFixtures(data.response);
+      } catch (err) {
+        console.error("Failed to load fixtures:", err);
+      } finally {
+        setLoadingFixtures(false);
       }
+    };
+    fetchFixtures();
+  }, []);
+
+  const fixturesByRound = useMemo(() => {
+    const grouped = {};
+    fixtures.forEach((fixture) => {
+      const round = fixture.league.round;
+      if (!grouped[round]) grouped[round] = [];
+      grouped[round].push(fixture);
     });
+    return grouped;
+  }, [fixtures]);
 
-    console.log(positions);
+  const rounds = useMemo(() => {
+    return Object.keys(fixturesByRound).sort((a, b) => {
+      const numA = parseInt(a.split(" - ")[1]);
+      const numB = parseInt(b.split(" - ")[1]);
+      return numA - numB;
+    });
+  }, [fixturesByRound]);
 
-    if (
-      positions.Goalkeeper < 1 ||
-      positions.Defender < 3 ||
-      positions.Midfielder < 3 ||
-      positions.Attacker < 1
-    ) {
-      alert(
-        "Your team needs to have at least 1 Goalkeeper, 3 Defenders, 3 Midfielders, 1 Attacker"
-      );
-    }
-  };
+  useEffect(() => {
+    if (rounds.length === 0) return;
+    const recentIndex = getMostRecentProcessedRoundIndex(fixturesByRound);
+    setCurrentRoundIndex(recentIndex);
+  }, [rounds, fixturesByRound]);
+
+  const currentRound = rounds[currentRoundIndex];
+  const currentFixtures = fixturesByRound[currentRound] || [];
 
   useEffect(() => {
     const fetchData = async () => {
@@ -225,31 +164,11 @@ const App = () => {
       if (!token) return;
 
       try {
-        const [teamResponse, teamOfTheWeekResponse, pointsResponse] =
-          await Promise.all([
-            fetch("/api/team/my-team", {
-              headers: { Authorization: `Bearer ${token}` },
-            }),
-            fetch("/api/team/totw"),
-            fetch("/api/fetchPoints", {
-              method: "POST",
-              headers: {
-                "Content-Type": "application/json",
-                Authorization: `Bearer ${token}`,
-              },
-            }),
-          ]);
+        const teamOfTheWeekResponse = await fetch("/api/team/totw");
 
-        const [teamData, teamOfTheWeekData, pointsData] = await Promise.all([
-          teamResponse.json(),
-          teamOfTheWeekResponse.json(),
-          pointsResponse.json(),
-        ]);
+        const teamOfTheWeekData = await teamOfTheWeekResponse.json();
 
-        setUserTeam(teamData);
         setTeamOfTheWeek(teamOfTheWeekData);
-        setUserPoints(pointsData.gameweekPoints);
-        setTotalPoints(pointsData.totalPoints);
       } catch (error) {
         console.error("Fetch failed:", error);
       }
@@ -260,88 +179,78 @@ const App = () => {
 
   return (
     <div className={styles.layoutContainer}>
-      <div className="accountList">
-        <h1>My Team</h1>
-        <button onClick={() => handleLogout()}>Logout</button>
-        {userTeam ? (
-          <div>
-            <h2>
-              GW points: {userPoints} Total points: {totalPoints}
-            </h2>
-            <button onClick={() => simulatePoints()}>Simulate</button>
-            <h2>
-              Your budget: {parseFloat((userTeam.budget / 100).toFixed(2))}
-            </h2>
-            <button onClick={() => saveTeam()}>Save team</button>
-            <h2>Starters</h2>
-            {groupAndSortPlayers(
-              userTeam.players.filter((p) => !p.isSubstitute)
-            ).map(([position, players]) => (
-              <div key={position}>
-                <h3>
-                  {position}s ({players.length})
-                </h3>
-                <ul className="teamList">
-                  {players.map((player) => (
-                    <li key={player._id}>
-                      <button onClick={() => setModalOpenForPlayer(player._id)}>
-                        Click Me
-                      </button>
-                      {player.isCaptain ? (
-                        <strong>
-                          {player.name} ({(player.price / 100).toFixed(1)}){" "}
-                          {player.gameweekPoints * 2}
-                        </strong>
-                      ) : (
-                        <>
-                          {player.name} ({(player.price / 100).toFixed(1)}){" "}
-                          {player.gameweekPoints}
-                        </>
-                      )}
-                      <button onClick={() => removeFromTeam(player)}>
-                        Remove
-                      </button>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            ))}
-            <h2>Substitutes</h2>
-            {groupAndSortPlayers(
-              userTeam.players.filter((p) => p.isSubstitute)
-            ).map(([position, players]) => (
-              <div key={position}>
-                <h3>
-                  {position}s ({players.length})
-                </h3>
-                <ul className="teamList">
-                  {players.map((player) => (
-                    <li key={player._id}>
-                      <button onClick={() => setModalOpenForPlayer(player._id)}>
-                        Click Me
-                      </button>
-                      {player.isCaptain ? (
-                        <strong>
-                          {player.name} ({(player.price / 100).toFixed(1)}){" "}
-                          {player.gameweekPoints}
-                        </strong>
-                      ) : (
-                        <>
-                          {player.name} ({(player.price / 100).toFixed(1)}){" "}
-                          {player.gameweekPoints}
-                        </>
-                      )}
-                      <button onClick={() => removeFromTeam(player)}>
-                        Remove
-                      </button>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            ))}
-          </div>
+      <div className={styles.accountList}>
+        <h1>Fixtures</h1>
+
+        {loadingFixtures ? (
+          <p>Loading fixtures...</p>
         ) : (
-          <p>No team yet! Add players above.</p>
+          <div className={styles.fixturesContainer}>
+            {}
+            <div className={styles.navButtons}>
+              <button
+                onClick={() => setCurrentRoundIndex((i) => Math.max(i - 1, 0))}
+                disabled={currentRoundIndex === 0}
+                className={`${styles.forwardBackButton} ${styles.left}`}
+              >
+                ←
+              </button>
+
+              <h2 className={styles.gameweekHeader}>
+                {currentRound
+                  ? currentRound.replace("Regular Season - ", "Gameweek ")
+                  : "No fixtures"}
+              </h2>
+
+              <button
+                onClick={() =>
+                  setCurrentRoundIndex((i) =>
+                    Math.min(i + 1, rounds.length - 1)
+                  )
+                }
+                disabled={currentRoundIndex === rounds.length - 1}
+                className={`${styles.forwardBackButton} ${styles.right}`}
+              >
+                →
+              </button>
+            </div>
+
+            {}
+            <div>
+              {currentFixtures.map((f) => (
+                <div key={f.fixture.id} className={styles.fixtureCard}>
+                  {}
+                  <div className={styles.fixtureTeam}>
+                    <img
+                      src={getTeamLogo(f.teams.home.name)}
+                      alt={f.teams.home.name}
+                    />
+                    <span>{f.teams.home.name}</span>
+                  </div>
+
+                  {}
+                  <div className={styles.fixtureScore}>
+                    {f.fixture.status.short === "NS" ? (
+                      <>To be played</>
+                    ) : (
+                      <>
+                        {f.goals.home} - {f.goals.away}
+                      </>
+                    )}
+                  </div>
+
+                  {}
+                  <div className={styles.fixtureTeam}>
+                    <span>{f.teams.away.name}</span>
+                    <img
+                      src={getTeamLogo(f.teams.away.name)}
+                      alt={f.teams.away.name}
+                    />
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
         )}
       </div>
       <div className={styles.accountList}>
@@ -407,44 +316,6 @@ const App = () => {
           </>
         )}
       </div>
-      {modalOpenForPlayer && (
-        <div className="modal-overlay">
-          <div className="modal-content">
-            <h3>
-              {
-                userTeam?.players.find((p) => p._id === modalOpenForPlayer)
-                  ?.player?.name
-              }
-            </h3>
-            <button
-              onClick={() => {
-                makeCaptain(
-                  userTeam.players.find((p) => p._id === modalOpenForPlayer)
-                );
-                setModalOpenForPlayer(null);
-              }}
-            >
-              Make captain
-            </button>
-            <button
-              onClick={() => {
-                makeSubstitute(
-                  userTeam.players.find((p) => p._id === modalOpenForPlayer)
-                );
-                setModalOpenForPlayer(null);
-              }}
-            >
-              Sub
-            </button>
-            <button
-              className="close-btn"
-              onClick={() => setModalOpenForPlayer(null)}
-            >
-              &times;
-            </button>
-          </div>
-        </div>
-      )}
     </div>
   );
 };

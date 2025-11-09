@@ -13,13 +13,6 @@ div {
   float: left;
 }
 
-.accountList {
-  text-align: center;
-  height: 100%;
-  width: 50%;
-  float: left;
-}
-
 .search {
   padding: 0px;
   font-size: 15px;

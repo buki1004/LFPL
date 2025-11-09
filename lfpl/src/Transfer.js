@@ -33,16 +33,19 @@ const Transfers = () => {
     Bournemouth: require("./images/Bournemouth.png"),
     Brentford: require("./images/Brentford.png"),
     Brighton: require("./images/Brighton.png"),
+    Burnley: require("./images/Burnley.png"),
     Chelsea: require("./images/Chelsea.png"),
     "Crystal Palace": require("./images/Crystal Palace.png"),
     Everton: require("./images/Everton.png"),
     Fulham: require("./images/Fulham.png"),
+    Leeds: require("./images/Leeds.png"),
     Liverpool: require("./images/Liverpool.png"),
     "Manchester City": require("./images/Manchester City.png"),
     "Manchester United": require("./images/Manchester United.png"),
     Newcastle: require("./images/Newcastle.png"),
     Nottingham: require("./images/Nottingham.png"),
     "Nottingham Forest": require("./images/Nottingham.png"),
+    Sunderland: require("./images/Sunderland.png"),
     Tottenham: require("./images/Tottenham.png"),
     "West Ham": require("./images/West Ham.png"),
     Wolves: require("./images/Wolves.png"),
@@ -244,7 +247,7 @@ const Transfers = () => {
               .map((player) => {
                 const position = player.position || "Unknown";
                 const isInTeam = userTeam?.players?.some(
-                  (p) => p.player?.id == player.id
+                  (p) => p.player?.id === player.id
                 );
 
                 return (
