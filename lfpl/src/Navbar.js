@@ -1,11 +1,31 @@
 import { useLocation, NavLink } from "react-router-dom";
 import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 
 export default function Navbar() {
   const location = useLocation();
+  const navigate = useNavigate();
   const [darkMode, setDarkMode] = useState(
     localStorage.getItem("darkMode") === "true"
   );
+
+  const handleLogout = async () => {
+    try {
+      await fetch("/api/auth/logout", {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+      });
+
+      localStorage.removeItem("token");
+      localStorage.removeItem("userId");
+      localStorage.removeItem("teamId");
+      navigate("/login");
+    } catch (error) {
+      console.error("Logout failed: ", error);
+    }
+  };
 
   useEffect(() => {
     if (darkMode) {
@@ -21,6 +41,9 @@ export default function Navbar() {
 
   return (
     <nav className="nav">
+      <button className="logout" onClick={() => handleLogout()}>
+        ⎋
+      </button>
       <NavLink to="/" className="nav-link">
         Home
       </NavLink>

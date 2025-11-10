@@ -1,16 +1,15 @@
 import React, { useEffect, useState, useMemo } from "react";
 import "./App.css";
-import { useNavigate } from "react-router-dom";
 import styles from "./App.module.css";
 import pitch from "./images/pitch.png";
 import { getLastName, getPlayerCoordinates } from "./utils/teamUtils";
 
 const App = () => {
   const [teamOfTheWeek, setTeamOfTheWeek] = useState(null);
+  const [totwPoints, setTotwPoints] = useState(0);
   const [fixtures, setFixtures] = useState([]);
   const [loadingFixtures, setLoadingFixtures] = useState(true);
   const [currentRoundIndex, setCurrentRoundIndex] = useState(0);
-  const navigate = useNavigate();
 
   const logos = {
     Arsenal: require("./images/Arsenal.png"),
@@ -56,24 +55,6 @@ const App = () => {
     }
 
     return sortedRounds.length - 1;
-  };
-
-  const handleLogout = async () => {
-    try {
-      await fetch("/api/auth/logout", {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
-        },
-      });
-
-      localStorage.removeItem("token");
-      localStorage.removeItem("userId");
-      localStorage.removeItem("teamId");
-      navigate("/login");
-    } catch (error) {
-      console.error("Logout failed: ", error);
-    }
   };
 
   const groupAndSortPlayers = (players = []) => {
@@ -165,10 +146,19 @@ const App = () => {
 
       try {
         const teamOfTheWeekResponse = await fetch("/api/team/totw");
-
         const teamOfTheWeekData = await teamOfTheWeekResponse.json();
 
         setTeamOfTheWeek(teamOfTheWeekData);
+
+        const total = teamOfTheWeekData.players
+          .filter((p) => !p.isSubstitute)
+          .reduce(
+            (sum, p) =>
+              sum + (p.gameweekPoints || p.player?.gameweekPoints || 0),
+            0
+          );
+
+        setTotwPoints(total);
       } catch (error) {
         console.error("Fetch failed:", error);
       }
@@ -193,7 +183,7 @@ const App = () => {
                 disabled={currentRoundIndex === 0}
                 className={`${styles.forwardBackButton} ${styles.left}`}
               >
-                ←
+                &lt;
               </button>
 
               <h2 className={styles.gameweekHeader}>
@@ -211,7 +201,7 @@ const App = () => {
                 disabled={currentRoundIndex === rounds.length - 1}
                 className={`${styles.forwardBackButton} ${styles.right}`}
               >
-                →
+                &gt;
               </button>
             </div>
 
@@ -259,7 +249,7 @@ const App = () => {
           <p>Loading Team of the Week...</p>
         ) : (
           <>
-            <h2>Best lineup this gameweek</h2>
+            <h2>Total points: {totwPoints}</h2>
             <div className={styles.pitchContainer}>
               <img src={pitch} className={styles.pitchImage} />
               {groupAndSortPlayers(

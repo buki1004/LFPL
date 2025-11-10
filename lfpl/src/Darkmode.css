@@ -1,7 +1,7 @@
 body.dark-mode {
   /*background-color: #38343c !important;*/
-  background-color: #2c2d32 !important;
-  color: #f0f0f0 !important;
+  background-color: #171a21 !important;
+  color: #c7d5e0 !important;
 }
 
 body.dark-mode [class*="accountList"],
@@ -10,8 +10,8 @@ body.dark-mode [class*="leagueList"],
 body.dark-mode [class*="leagueActions"],
 body.dark-mode [class*="signupForm"],
 body.dark-mode [class*="fixturesContainer"] {
-  background-color: #323339 !important;
-  border: 1px solid gainsboro !important;
+  background-color: #1b2838 !important;
+  border: 1px solid #2a475e !important;
 }
 
 body.dark-mode [class*="playerCard"],
@@ -22,20 +22,20 @@ body.dark-mode [class*="playerName"],
 body.dark-mode [class*="subCard"],
 body.dark-mode [class*="dropdownItem"],
 body.dark-mode [class*="fixtureCard"] {
-  background-color: #4a4650 !important;
-  color: #ffffff !important;
-  border-color: #5a5560 !important;
+  background-color: #293749 !important;
+  color: #c7d5e0 !important;
+  border-color: #34455c !important;
 }
 
 body.dark-mode [class*="playerPoints"],
 body.dark-mode [class*="fixtureScore"] {
-  background-color: #38343c !important;
-  color: #ffffff !important;
+  background-color: #1e2b3b !important;
+  color: #c7d5e0 !important;
 }
 
 body.dark-mode [class*="playerMeta"],
 body.dark-mode [class*="fixtureTeam"] {
-  color: #ffffff !important;
+  color: #c7d5e0 !important;
 }
 
 body.dark-mode [class*="subCard"],
@@ -50,14 +50,15 @@ body.dark-mode [class*="playerCard"]:hover,
 body.dark-mode [class*="dropdownItem"]:hover,
 body.dark-mode [class*="subCard"]:hover,
 body.dark-mode [class*="subCard"]:hover [class*="playerName"],
-body.dark-mode [class*="fixtureCard"]:hover {
-  background-color: #5a5560 !important;
+body.dark-mode [class*="fixtureCard"]:hover,
+body.dark-mode [class*="signupAnchor"]:hover {
+  background-color: #34455c !important;
   transition: none !important;
 }
 
 body.dark-mode [class*="playerCard"]:hover {
-  background-color: #5f5f75 !important;
-  color: white !important;
+  background-color: #34455c !important;
+  color: #c7d5e0 !important;
 }
 
 body.dark-mode [class*="playerCardList"] {
@@ -70,10 +71,11 @@ body.dark-mode [class*="playerCardList"]:hover {
 
 body.dark-mode [class*="searchInput"],
 body.dark-mode [class*="filterDropdown"],
-body.dark-mode [class*="leagueInput"] {
-  background-color: #4a4650 !important;
-  color: #fff !important;
-  border: 1px solid #5a5560 !important;
+body.dark-mode [class*="leagueInput"],
+body.dark-mode [class*="signupInput"] {
+  background-color: #35475e !important;
+  color: #c7d5e0 !important;
+  border: 1px solid #202d41 !important;
 }
 
 body.dark-mode [class*="saveTeam"],
@@ -97,7 +99,7 @@ body.dark-mode [class*="standingsBox"],
 body.dark-mode [class*="leagueBox"],
 body.dark-mode [class*="sidePanel"] {
   background-color: #4a4650 !important;
-  color: #fff !important;
+  color: #c7d5e0 !important;
 }
 
 body.dark-mode [class*="playerMarker"]:hover {
@@ -105,7 +107,7 @@ body.dark-mode [class*="playerMarker"]:hover {
 }
 
 body.dark-mode [class*="signupAnchor"] {
-  color: #fff;
+  color: #c7d5e0;
 }
 
 body.dark-mode [class*="signupAnchor"]:hover {
@@ -122,10 +124,10 @@ body.dark-mode h6 {
 }
 
 body.dark-mode .nav {
-  background: linear-gradient(to right, #6a1b9a, #37003c);
+  background: linear-gradient(to right, #2a475e, #1b2838);
 }
 
 body.dark-mode .nav a.active,
 body.dark-mode .nav a:hover {
-  border-bottom: 3px solid #ff2882;
+  border-bottom: 3px solid #66c0f4;
 }

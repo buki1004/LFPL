@@ -6,6 +6,9 @@ const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const navigate = useNavigate();
+  const [darkMode, setDarkMode] = useState(
+    localStorage.getItem("darkMode") === "true"
+  );
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -36,11 +39,27 @@ const Login = () => {
     }
   };
 
+  useEffect(() => {
+    if (darkMode) {
+      document.body.classList.add("dark-mode");
+    } else {
+      document.body.classList.remove("dark-mode");
+    }
+    localStorage.setItem("darkMode", darkMode);
+  }, [darkMode]);
+
   useEffect(() => {}, []);
 
   return (
     <div className={styles.formContainer}>
       <form onSubmit={handleLogin} className={styles.signupForm}>
+        <button
+          className={styles.darkModeToggleLogin}
+          onClick={() => setDarkMode(!darkMode)}
+          aria-label={darkMode ? "Switch to light mode" : "Switch to dark mode"}
+        >
+          {darkMode ? "☀️" : "🌙"}
+        </button>
         <h2>Login</h2>
         <input
           type="email"

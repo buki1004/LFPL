@@ -79,6 +79,25 @@ div {
   opacity: 0.8;
 }
 
+.logout {
+  position: absolute;
+  left: 2px;
+  background: none;
+  border: none;
+  font-size: 1.2rem;
+  cursor: pointer;
+  color: inherit;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  height: 100%;
+}
+
+.logout:hover {
+  opacity: 0.8;
+}
+
 .teamList {
   list-style-type: none;
 }
