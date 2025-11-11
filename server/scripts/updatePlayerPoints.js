@@ -1,11 +1,11 @@
 require("dotenv").config();
 
 const mongoose = require("mongoose");
-const Player = require("./models/Player");
-const fixtures = require("./allFixtures.json");
+const Player = require("../models/Player");
+const fixtures = require("../allFixtures.json");
 const fs = require("fs");
 const path = require("path");
-const fixturesPath = path.join(__dirname, "allFixtures.json");
+const fixturesPath = path.join(__dirname, "../allFixtures.json");
 
 function calculatePoints(playerStats, position, fixture, teamName) {
   if (!playerStats || !playerStats.games) {
@@ -83,6 +83,24 @@ async function updatePlayerPoints() {
       continue;
     }
 
+    if (roundNumber !== null) {
+      const playerIds = data.response.flatMap((team) =>
+        team.players.map((p) => p.player.id)
+      );
+      const dbPlayers = await Player.find({ id: { $in: playerIds } });
+
+      const anyAlreadyPlayed = dbPlayers.some(
+        (p) => (p.statistics.appearances || 0) >= roundNumber
+      );
+
+      if (anyAlreadyPlayed) {
+        console.log(
+          `Skipping fixture ${fixtureId} because at least one player already has appearances >= round ${roundNumber}`
+        );
+        continue;
+      }
+    }
+
     let anyPlayerUpdated = false;
     let updatedPlayersCount = 0;
     const saveOps = [];
@@ -105,18 +123,6 @@ async function updatePlayerPoints() {
         const playerInDb = await Player.findOne({ id: playerId });
         if (!playerInDb) {
           console.log(`Player not found in DB: ${playerId}`);
-          continue;
-        }
-
-        if (
-          roundNumber !== null &&
-          (playerInDb.statistics.appearances || 0) >= roundNumber
-        ) {
-          console.log(
-            `Skipping player ${playerInDb.name || playerId} (apps=${
-              playerInDb.statistics.appearances
-            }, round=${roundNumber})`
-          );
           continue;
         }
 

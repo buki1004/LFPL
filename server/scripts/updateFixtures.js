@@ -1,8 +1,9 @@
 require("dotenv").config();
 const fs = require("fs");
+const path = require("path");
 const axios = require("axios");
 
-const FIXTURE_FILE = "./allFixtures.json";
+const FIXTURE_FILE = path.join(__dirname, "..", "allFixtures.json");
 
 async function updateFixtures() {
   const raw = fs.readFileSync(FIXTURE_FILE, "utf-8");
@@ -30,7 +31,6 @@ async function updateFixtures() {
     ) {
       localFixtures.response[localIndex] = apiF;
 
-      // Save info for logging
       const homeTeam = apiF.teams.home.name;
       const awayTeam = apiF.teams.away.name;
       const homeGoals = apiF.goals.home;

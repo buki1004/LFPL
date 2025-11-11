@@ -50,37 +50,37 @@ router.get("/totw", async (req, res) => {
       players: [],
     };
 
+    for (const [pos, min] of Object.entries(positionMinimums)) {
+      const candidates = allPlayers.filter((p) => p.position === pos);
+      for (let i = 0; i < min && i < candidates.length; i++) {
+        team.players.push({ player: candidates[i], isSubstitute: false });
+        positionCounts[pos]++;
+      }
+    }
+
     for (const player of allPlayers) {
       const pos = player.position;
       const currentTotal = team.players.filter((p) => !p.isSubstitute).length;
 
       if (currentTotal >= totalMax) break;
 
-      if (positionCounts[pos] < positionLimits[pos]) {
-        team.players.push({
-          player,
-          isSubstitute: false,
-        });
+      if (
+        positionCounts[pos] < positionLimits[pos] &&
+        !team.players.some((p) => p.player._id.equals(player._id))
+      ) {
+        team.players.push({ player, isSubstitute: false });
         positionCounts[pos]++;
       }
     }
 
-    const starterIds = new Set(
-      team.players.map((p) => p.player._id.toString())
-    );
-    const remainingPlayers = allPlayers.filter(
-      (p) => !starterIds.has(p._id.toString())
-    );
-
-    for (const player of remainingPlayers) {
+    for (const player of allPlayers) {
       if (team.players.length >= totalSquad) break;
-
       const pos = player.position;
-      if (positionCounts[pos] < positionLimits[pos]) {
-        team.players.push({
-          player,
-          isSubstitute: true,
-        });
+      if (
+        positionCounts[pos] < positionLimits[pos] &&
+        !team.players.some((p) => p.player._id.equals(player._id))
+      ) {
+        team.players.push({ player, isSubstitute: true });
         positionCounts[pos]++;
       }
     }

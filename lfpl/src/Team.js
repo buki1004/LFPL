@@ -251,7 +251,8 @@ const Team = () => {
             <p>
               GW points:{" "}
               {modalOpenForPlayer.player?.gameweekPoints ||
-                modalOpenForPlayer.gameweekPoints}{" "}
+                modalOpenForPlayer.gameweekPoints ||
+                " 0 "}{" "}
               Total points:{" "}
               {modalOpenForPlayer.player?.totalPoints ||
                 modalOpenForPlayer.totalPoints}

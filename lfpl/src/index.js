@@ -13,6 +13,13 @@ import League from "./League";
 import ProtectedRoute from "./ProtectedRoute";
 import "./Darkmode.css";
 
+const darkMode = localStorage.getItem("darkMode") === "true";
+if (darkMode) {
+  document.body.classList.add("dark-mode");
+} else {
+  document.body.classList.remove("dark-mode");
+}
+
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
   <BrowserRouter>

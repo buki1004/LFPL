@@ -1,8 +1,8 @@
 require("dotenv").config();
 
 const mongoose = require("mongoose");
-const Player = require("./models/Player");
-const Team = require("./models/Team");
+const Player = require("../models/Player");
+const Team = require("../models/Team");
 
 async function updatePoints() {
   const allTeams = await Team.find().populate("players.player");

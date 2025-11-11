@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import styles from "./Signup.module.css";
+import { Link } from "react-router-dom";
 
 const Signup = () => {
   const [email, setEmail] = useState("");
@@ -46,6 +47,7 @@ const Signup = () => {
     <div className={styles.formContainer}>
       <form onSubmit={handleSignup} className={styles.signupForm}>
         <button
+          type="button"
           className={styles.darkModeToggleLogin}
           onClick={() => setDarkMode(!darkMode)}
           aria-label={darkMode ? "Switch to light mode" : "Switch to dark mode"}
@@ -81,9 +83,9 @@ const Signup = () => {
         >
           Sign up
         </button>
-        <a href="/login" className={styles.signupAnchor}>
+        <Link to="/login" className={styles.signupAnchor}>
           Already have an account? Click here to login
-        </a>
+        </Link>
       </form>
     </div>
   );
