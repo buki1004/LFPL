@@ -10,6 +10,9 @@ const App = () => {
   const [fixtures, setFixtures] = useState([]);
   const [loadingFixtures, setLoadingFixtures] = useState(true);
   const [currentRoundIndex, setCurrentRoundIndex] = useState(0);
+  const [selectedFixture, setSelectedFixture] = useState(null);
+  const [fixtureDetails, setFixtureDetails] = useState(null);
+  const [loadingDetails, setLoadingDetails] = useState(false);
 
   const logos = {
     Arsenal: require("./images/Arsenal.png"),
@@ -167,6 +170,29 @@ const App = () => {
     fetchData();
   }, []);
 
+  const handleFixtureClick = async (fixture) => {
+    setSelectedFixture(fixture);
+    setLoadingDetails(true);
+    setFixtureDetails(null);
+    try {
+      const res = await fetch(`/api/fixtures/${fixture.fixture.id}`);
+      const data = await res.json();
+
+      console.log("Fetched fixture data:", data);
+
+      setFixtureDetails(data.response || []);
+    } catch (err) {
+      console.error("Failed to fetch fixture details:", err);
+    } finally {
+      setLoadingDetails(false);
+    }
+  };
+
+  const closeModal = () => {
+    setSelectedFixture(null);
+    setFixtureDetails(null);
+  };
+
   return (
     <div className={styles.layoutContainer}>
       <div className={styles.accountList}>
@@ -208,8 +234,12 @@ const App = () => {
             {}
             <div>
               {currentFixtures.map((f) => (
-                <div key={f.fixture.id} className={styles.fixtureCard}>
-                  {}
+                <div
+                  key={f.fixture.id}
+                  className={styles.fixtureCard}
+                  style={{ cursor: "pointer" }}
+                  onClick={() => handleFixtureClick(f)}
+                >
                   <div className={styles.fixtureTeam}>
                     <img
                       src={getTeamLogo(f.teams.home.name)}
@@ -218,7 +248,6 @@ const App = () => {
                     <span>{f.teams.home.name}</span>
                   </div>
 
-                  {}
                   <div className={styles.fixtureScore}>
                     {f.fixture.status.short === "NS" ? (
                       <>To be played</>
@@ -229,7 +258,6 @@ const App = () => {
                     )}
                   </div>
 
-                  {}
                   <div className={styles.fixtureTeam}>
                     <span>{f.teams.away.name}</span>
                     <img
@@ -306,6 +334,88 @@ const App = () => {
           </>
         )}
       </div>
+      {selectedFixture && (
+        <div className={styles.modalOverlay} onClick={closeModal}>
+          <div
+            className={styles.modalFixture}
+            onClick={(e) => e.stopPropagation()}
+          >
+            <button className={styles.closeBtn} onClick={closeModal}>
+              &times;
+            </button>
+
+            <h2 className={styles.fixtureTitle}>
+              <img
+                src={getTeamLogo(selectedFixture.teams.home.name)}
+                alt={selectedFixture.teams.home.name}
+                className={styles.fixtureTeamLogo}
+              />{" "}
+              {selectedFixture.goals.home} - {selectedFixture.goals.away}{" "}
+              <img
+                src={getTeamLogo(selectedFixture.teams.away.name)}
+                alt={selectedFixture.teams.away.name}
+                className={styles.fixtureTeamLogo}
+              />
+            </h2>
+
+            {loadingDetails ? (
+              <p>Loading fixture details...</p>
+            ) : fixtureDetails.length > 0 ? (
+              (() => {
+                const homeTeamEvents = fixtureDetails
+                  .filter((e) => e.team.id === selectedFixture.teams.home.id)
+                  .sort((a, b) => a.time.elapsed - b.time.elapsed);
+
+                const awayTeamEvents = fixtureDetails
+                  .filter((e) => e.team.id === selectedFixture.teams.away.id)
+                  .sort((a, b) => a.time.elapsed - b.time.elapsed);
+
+                const renderEvent = (event) => {
+                  let icon = "";
+                  if (event.type.toLowerCase() === "goal") icon = "⚽";
+                  else if (event.type.toLowerCase() === "card") {
+                    icon = event.detail.toLowerCase().includes("yellow")
+                      ? "🟨"
+                      : "🟥";
+                  } else if (event.type.toLowerCase() === "subst") icon = "🔄";
+
+                  return (
+                    <div
+                      key={event.time.elapsed + Math.random()}
+                      className={`${styles.eventCard} ${styles[event.type]}`}
+                    >
+                      <span className={styles.eventIcon}>{icon}</span>
+                      <span className={styles.eventText}>
+                        {event.time?.elapsed}' {event.player?.name ?? "Unknown"}
+                        {event.type.toLowerCase() === "goal" &&
+                        event.assist?.name
+                          ? ` (Assist: ${event.assist.name})`
+                          : ""}
+                      </span>
+                    </div>
+                  );
+                };
+
+                return (
+                  <div className={styles.eventsContainer}>
+                    <div className={styles.teamEvents}>
+                      <h3>{selectedFixture.teams.home.name}</h3>
+                      {homeTeamEvents.map(renderEvent)}
+                    </div>
+
+                    <div className={styles.teamEvents}>
+                      <h3>{selectedFixture.teams.away.name}</h3>
+                      {awayTeamEvents.map(renderEvent)}
+                    </div>
+                  </div>
+                );
+              })()
+            ) : (
+              <p>No detailed events available.</p>
+            )}
+          </div>
+        </div>
+      )}
     </div>
   );
 };

@@ -14,6 +14,11 @@ body.dark-mode [class*="fixturesContainer"] {
   border: 1px solid #2a475e !important;
 }
 
+body.dark-mode [class*="modalFixture"] {
+  background-color: #1b2838 !important;
+  color: #c7d5e0 !important;
+}
+
 body.dark-mode [class*="playerCard"],
 body.dark-mode [class*="dropdownHeader"],
 body.dark-mode [class*="dropdownList"],
@@ -21,7 +26,8 @@ body.dark-mode [class*="modalContent"],
 body.dark-mode [class*="playerName"],
 body.dark-mode [class*="subCard"],
 body.dark-mode [class*="dropdownItem"],
-body.dark-mode [class*="fixtureCard"] {
+body.dark-mode [class*="fixtureCard"],
+body.dark-mode [class*="teamEvents"] {
   background-color: #293749 !important;
   color: #c7d5e0 !important;
   border-color: #34455c !important;
@@ -108,6 +114,12 @@ body.dark-mode [class*="playerMarker"]:hover {
 
 body.dark-mode [class*="signupAnchor"] {
   color: #c7d5e0;
+}
+
+body.dark-mode [class*="Goal"],
+body.dark-mode [class*="Card"],
+body.dark-mode [class*="subst"] {
+  color: #000;
 }
 
 body.dark-mode [class*="signupAnchor"]:hover {

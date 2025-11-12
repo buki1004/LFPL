@@ -199,6 +199,19 @@ async function updatePlayerPoints() {
         `No players updated for fixture ${fixtureId} (${homeTeam} ${homeGoals}:${awayGoals} ${awayTeam}), fixture will remain unprocessed`
       );
     }
+
+    const queuePath = path.join(__dirname, "../eventsQueue.json");
+
+    let eventsQueue = [];
+    if (fs.existsSync(queuePath)) {
+      eventsQueue = JSON.parse(fs.readFileSync(queuePath, "utf8"));
+    }
+
+    if (!eventsQueue.includes(fixtureId)) {
+      eventsQueue.push(fixtureId);
+      fs.writeFileSync(queuePath, JSON.stringify(eventsQueue, null, 2));
+      console.log(`Added fixture ${fixtureId} to event-fetch queue.`);
+    }
   }
 
   fs.writeFileSync(fixturesPath, JSON.stringify(fixtures, null, 2));
