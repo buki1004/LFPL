@@ -442,6 +442,7 @@ const Transfers = () => {
                     className={`${styles.playerCard} ${
                       isInTeam ? styles.disabledCard : ""
                     }`}
+                    onClick={() => setModalOpenForPlayer(player)}
                   >
                     <div className={styles.playerInfo}>
                       <img
@@ -456,7 +457,10 @@ const Transfers = () => {
                     </div>
                     <button
                       className={styles.addButton}
-                      onClick={() => addToTeam(player, setUserTeam)}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        addToTeam(player, setUserTeam);
+                      }}
                     >
                       +
                     </button>
@@ -497,9 +501,14 @@ const Transfers = () => {
                 </span>
               </div>
             </div>
-            <p>{modalOpenForPlayer.player.name}'s season statistics:</p>
+            <p>
+              {(modalOpenForPlayer.player?.name || modalOpenForPlayer.name) +
+                "'s season statistics:"}
+            </p>
             <div className={styles.stats}>
-              {renderPlayerStats(modalOpenForPlayer.player)}
+              {renderPlayerStats(
+                modalOpenForPlayer.player || modalOpenForPlayer
+              )}
             </div>
             {modalOpenForPlayer && (
               <button
