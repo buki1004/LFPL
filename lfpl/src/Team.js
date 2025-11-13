@@ -422,8 +422,8 @@ const Team = () => {
         </div>
       )}
       {modalOpenForPlayer && (
-        <div className={styles.modalOverlay}>
-          <div className={styles.modalContent}>
+        <div className={styles.playerModalOverlay}>
+          <div className={styles.playerModalContent}>
             <img
               src={getTeamLogo(
                 modalOpenForPlayer.player?.teamName ||

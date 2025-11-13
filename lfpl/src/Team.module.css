@@ -27,7 +27,7 @@ h2 {
   list-style-type: none;
 }
 
-.modalOverlay {
+.playerModalOverlay {
   position: fixed;
   top: 0;
   left: 0;
@@ -40,7 +40,7 @@ h2 {
   z-index: 1000;
 }
 
-.modalContent {
+.playerModalContent {
   background: white;
   padding: 2rem 2.5rem;
   border-radius: 12px;
@@ -88,11 +88,16 @@ h2 {
   font-size: 0.8rem;
   text-align: center;
   font-weight: bold;
-  transition: background-color 0.2s ease-in-out;
+  transition: background-color 0.2s ease-in-out, border-bottom 0.2s ease-in-out;
 }
 
 .playerMarker:hover {
-  background-color: rgba(240, 248, 255, 0.76);
+  background-color: rgba(240, 248, 255, 1);
+  border-bottom: 2px solid currentColor;
+}
+
+.playerMarker:active {
+  scale: 0.98;
 }
 
 .teamLogo {

@@ -14,11 +14,6 @@ body.dark-mode [class*="fixturesContainer"] {
   border: 1px solid #2a475e !important;
 }
 
-body.dark-mode [class*="modalFixture"] {
-  background-color: #1b2838 !important;
-  color: #c7d5e0 !important;
-}
-
 body.dark-mode [class*="statRow"] {
   background-color: #293749 !important;
   border-color: #34455c !important;
@@ -43,6 +38,11 @@ body.dark-mode [class*="pointsValue"] {
   color: #c7d5e0 !important;
 }
 
+body.dark-mode [class*="fixtureModalContent"] {
+  background-color: #1b2838 !important;
+  color: #c7d5e0 !important;
+}
+
 body.dark-mode [class*="playerCard"],
 body.dark-mode [class*="dropdownHeader"],
 body.dark-mode [class*="dropdownList"],
@@ -51,7 +51,8 @@ body.dark-mode [class*="playerName"],
 body.dark-mode [class*="subCard"],
 body.dark-mode [class*="dropdownItem"],
 body.dark-mode [class*="fixtureCard"],
-body.dark-mode [class*="teamEvents"] {
+body.dark-mode [class*="teamEvents"],
+body.dark-mode [class*="playerModalContent"] {
   background-color: #293749 !important;
   color: #c7d5e0 !important;
   border-color: #34455c !important;
@@ -135,7 +136,7 @@ body.dark-mode [class*="sidePanel"] {
 }
 
 body.dark-mode [class*="playerMarker"]:hover {
-  background-color: rgba(255, 255, 255, 0.1) !important;
+  background-color: rgb(27, 40, 56, 1);
 }
 
 body.dark-mode [class*="signupAnchor"] {
