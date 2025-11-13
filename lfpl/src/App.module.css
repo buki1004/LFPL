@@ -316,6 +316,7 @@ h2 {
   justify-content: center;
   align-items: center;
   z-index: 1000;
+  animation: fadeIn 0.25s ease-in-out;
 }
 
 .modalFixture {
@@ -402,4 +403,15 @@ h2 {
   height: 40px;
   vertical-align: middle;
   margin: 0 5px;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }

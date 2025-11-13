@@ -19,6 +19,30 @@ body.dark-mode [class*="modalFixture"] {
   color: #c7d5e0 !important;
 }
 
+body.dark-mode [class*="statRow"] {
+  background-color: #293749 !important;
+  border-color: #34455c !important;
+}
+body.dark-mode [class*="statRow"] [class*="statIcon"],
+body.dark-mode [class*="statRow"] [class*="statLabel"],
+body.dark-mode [class*="statRow"] [class*="statValue"] {
+  color: #c7d5e0 !important;
+  border-color: #34455c !important;
+}
+
+body.dark-mode [class*="pointsBox"] {
+  background-color: #20313f !important;
+  border-color: #00cc6a !important;
+}
+
+body.dark-mode [class*="pointsLabel"] {
+  color: #9fb0c5 !important;
+}
+
+body.dark-mode [class*="pointsValue"] {
+  color: #c7d5e0 !important;
+}
+
 body.dark-mode [class*="playerCard"],
 body.dark-mode [class*="dropdownHeader"],
 body.dark-mode [class*="dropdownList"],
@@ -46,7 +70,6 @@ body.dark-mode [class*="fixtureTeam"] {
 
 body.dark-mode [class*="subCard"],
 body.dark-mode [class*="subCard"],
-body.dark-mode [class*="fixtureCard"],
 body.dark-mode [class*="fixtureScore"] {
   transition: none !important;
   animation: none !important;
@@ -56,10 +79,13 @@ body.dark-mode [class*="playerCard"]:hover,
 body.dark-mode [class*="dropdownItem"]:hover,
 body.dark-mode [class*="subCard"]:hover,
 body.dark-mode [class*="subCard"]:hover [class*="playerName"],
-body.dark-mode [class*="fixtureCard"]:hover,
 body.dark-mode [class*="signupAnchor"]:hover {
   background-color: #34455c !important;
   transition: none !important;
+}
+
+body.dark-mode [class*="fixtureCard"]:hover {
+  background-color: #34455c !important;
 }
 
 body.dark-mode [class*="playerCard"]:hover {
