@@ -55,6 +55,192 @@ const Transfers = () => {
     return logos[teamName] || sans;
   };
 
+  const renderPlayerStats = (player) => {
+    switch (player.position) {
+      case "Goalkeeper":
+        return (
+          <div>
+            <div className={styles.statRow}>
+              <span className={styles.statIcon}>🧍</span>
+              <span className={styles.statLabel}>Apps:</span>
+              <span className={styles.statValue}>
+                {player.statistics.appearances}
+              </span>
+            </div>
+            <div className={styles.statRow}>
+              <span className={styles.statIcon}>⏱️</span>
+              <span className={styles.statLabel}>Minutes:</span>
+              <span className={styles.statValue}>
+                {player.statistics.minutes}
+              </span>
+            </div>
+            <div className={styles.statRow}>
+              <span className={styles.statIcon}>🧤</span>
+              <span className={styles.statLabel}>Saves:</span>
+              <span className={styles.statValue}>
+                {player.statistics.saves}
+              </span>
+            </div>
+            <div className={styles.statRow}>
+              <span className={styles.statIcon}>❌</span>
+              <span className={styles.statLabel}>Goals conceded:</span>
+              <span className={styles.statValue}>
+                {player.statistics.conceded}
+              </span>
+            </div>
+            <div className={styles.statRow}>
+              <span className={styles.statIcon}>⚽</span>
+              <span className={styles.statLabel}>Assists:</span>
+              <span className={styles.statValue}>
+                {player.statistics.assists}
+              </span>
+            </div>
+            <div className={styles.statRow}>
+              <span className={styles.statIcon}>⚽</span>
+              <span className={styles.statLabel}>Goals scored:</span>
+              <span className={styles.statValue}>
+                {player.statistics.goals}
+              </span>
+            </div>
+          </div>
+        );
+      case "Defender":
+        return (
+          <div>
+            <div className={styles.statRow}>
+              <span className={styles.statIcon}>🧍</span>
+              <span className={styles.statLabel}>Apps:</span>
+              <span className={styles.statValue}>
+                {player.statistics.appearances}
+              </span>
+            </div>
+            <div className={styles.statRow}>
+              <span className={styles.statIcon}>⏱️</span>
+              <span className={styles.statLabel}>Minutes:</span>
+              <span className={styles.statValue}>
+                {player.statistics.minutes}
+              </span>
+            </div>
+            <div className={styles.statRow}>
+              <span className={styles.statIcon}>🛡️</span>
+              <span className={styles.statLabel}>Tackles:</span>
+              <span className={styles.statValue}>
+                {player.statistics.tackles}
+              </span>
+            </div>
+            <div className={styles.statRow}>
+              <span className={styles.statIcon}>🛡️</span>
+              <span className={styles.statLabel}>Interceptions:</span>
+              <span className={styles.statValue}>
+                {player.statistics.interceptions}
+              </span>
+            </div>
+            <div className={styles.statRow}>
+              <span className={styles.statIcon}>🛡️</span>
+              <span className={styles.statLabel}>Duels won:</span>
+              <span className={styles.statValue}>
+                {player.statistics.duelsWon}
+              </span>
+            </div>
+            <div className={styles.statRow}>
+              <span className={styles.statIcon}>⚽</span>
+              <span className={styles.statLabel}>Assists:</span>
+              <span className={styles.statValue}>
+                {player.statistics.assists}
+              </span>
+            </div>
+            <div className={styles.statRow}>
+              <span className={styles.statIcon}>⚽</span>
+              <span className={styles.statLabel}>Goals scored:</span>
+              <span className={styles.statValue}>
+                {player.statistics.goals}
+              </span>
+            </div>
+          </div>
+        );
+      case "Midfielder":
+        return (
+          <div>
+            <div className={styles.statRow}>
+              <span className={styles.statIcon}>🧍</span>
+              <span className={styles.statLabel}>Apps:</span>
+              <span className={styles.statValue}>
+                {player.statistics.appearances}
+              </span>
+            </div>
+            <div className={styles.statRow}>
+              <span className={styles.statIcon}>⏱️</span>
+              <span className={styles.statLabel}>Minutes:</span>
+              <span className={styles.statValue}>
+                {player.statistics.minutes}
+              </span>
+            </div>
+            <div className={styles.statRow}>
+              <span className={styles.statIcon}>🎯</span>
+              <span className={styles.statLabel}>Passes:</span>
+              <span className={styles.statValue}>
+                {player.statistics.passes}
+              </span>
+            </div>
+            <div className={styles.statRow}>
+              <span className={styles.statIcon}>🎯</span>
+              <span className={styles.statLabel}>Key passes:</span>
+              <span className={styles.statValue}>
+                {player.statistics.keyPasses}
+              </span>
+            </div>
+            <div className={styles.statRow}>
+              <span className={styles.statIcon}>⚽</span>
+              <span className={styles.statLabel}>Assists:</span>
+              <span className={styles.statValue}>
+                {player.statistics.assists}
+              </span>
+            </div>
+            <div className={styles.statRow}>
+              <span className={styles.statIcon}>⚽</span>
+              <span className={styles.statLabel}>Goals scored:</span>
+              <span className={styles.statValue}>
+                {player.statistics.goals}
+              </span>
+            </div>
+          </div>
+        );
+      case "Attacker":
+        return (
+          <div className={styles.stats}>
+            <div className={styles.statRow}>
+              <span className={styles.statIcon}>🧍</span>
+              <span className={styles.statLabel}>Apps:</span>
+              <span className={styles.statValue}>
+                {player.statistics.appearances}
+              </span>
+            </div>
+            <div className={styles.statRow}>
+              <span className={styles.statIcon}>⏱️</span>
+              <span className={styles.statLabel}>Minutes:</span>
+              <span className={styles.statValue}>
+                {player.statistics.minutes}
+              </span>
+            </div>
+            <div className={styles.statRow}>
+              <span className={styles.statIcon}>⚽</span>
+              <span className={styles.statLabel}>Assists:</span>
+              <span className={styles.statValue}>
+                {player.statistics.assists}
+              </span>
+            </div>
+            <div className={styles.statRow}>
+              <span className={styles.statIcon}>⚽</span>
+              <span className={styles.statLabel}>Goals scored:</span>
+              <span className={styles.statValue}>
+                {player.statistics.goals}
+              </span>
+            </div>
+          </div>
+        );
+    }
+  };
+
   useEffect(() => {
     const fetchPlayers = async () => {
       try {
@@ -293,15 +479,28 @@ const Transfers = () => {
             <h3>
               {modalOpenForPlayer.player?.name || modalOpenForPlayer.name}
             </h3>
-            <p>
-              GW points:{" "}
-              {modalOpenForPlayer.player?.gameweekPoints ||
-                modalOpenForPlayer.gameweekPoints ||
-                " 0 "}{" "}
-              Total points:{" "}
-              {modalOpenForPlayer.player?.totalPoints ||
-                modalOpenForPlayer.totalPoints}
-            </p>
+            <div className={styles.pointsBar}>
+              <div className={styles.pointsBox}>
+                <span className={styles.pointsLabel}>GW</span>
+                <span className={styles.pointsValue}>
+                  {modalOpenForPlayer.player?.gameweekPoints ||
+                    modalOpenForPlayer.gameweekPoints ||
+                    "0"}
+                </span>
+              </div>
+              <div className={styles.pointsBox}>
+                <span className={styles.pointsLabel}>Total</span>
+                <span className={styles.pointsValue}>
+                  {modalOpenForPlayer.player?.totalPoints ||
+                    modalOpenForPlayer.totalPoints ||
+                    "0"}
+                </span>
+              </div>
+            </div>
+            <p>{modalOpenForPlayer.player.name}'s season statistics:</p>
+            <div className={styles.stats}>
+              {renderPlayerStats(modalOpenForPlayer.player)}
+            </div>
             {modalOpenForPlayer && (
               <button
                 onClick={() => {
