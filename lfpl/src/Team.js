@@ -349,10 +349,8 @@ const Team = () => {
                     style={{
                       top: coordinates.top,
                       left: coordinates.left,
-                      cursor: viewingOther ? "default" : "pointer",
                     }}
                     onClick={() =>
-                      !viewingOther &&
                       setModalOpenForPlayer(
                         userTeam.players.find(
                           (p) => p.player._id === player.playerId
@@ -479,6 +477,9 @@ const Team = () => {
                   setModalOpenForPlayer(null);
                 }}
                 className={styles.modalButton}
+                style={{
+                  visibility: viewingOther ? "hidden" : "visible",
+                }}
               >
                 Captain
               </button>
@@ -490,6 +491,9 @@ const Team = () => {
                 setModalOpenForPlayer(null);
               }}
               className={styles.modalButton}
+              style={{
+                visibility: viewingOther ? "hidden" : "visible",
+              }}
             >
               Sub
             </button>

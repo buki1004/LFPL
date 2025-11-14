@@ -130,7 +130,9 @@ body.dark-mode .gameweekHeader:hover {
 
 body.dark-mode [class*="saveTeam"],
 body.dark-mode [class*="leagueBtn"],
-body.dark-mode [class*="signupButton"] {
+body.dark-mode [class*="signupButton"],
+body.dark-mode [class*="modalButton"],
+body.dark-mode [class*="addButton"] {
   border-bottom: 2px solid #c7d5e0;
 }
 
