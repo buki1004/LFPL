@@ -458,13 +458,18 @@ const App = () => {
           </div>
         )}
       </div>
-      <div className={styles.accountList}>
+      <div className={styles.leagueList}>
         <h1>Team of the week</h1>
         {!teamOfTheWeek ? (
           <p>Loading Team of the Week...</p>
         ) : (
           <>
-            <h2>Total points: {totwPoints}</h2>
+            <div className={styles.pointsBar}>
+              <div className={styles.pointsBox}>
+                <span className={styles.pointsLabel}>Total</span>
+                <span className={styles.pointsValue}>{totwPoints || "0"}</span>
+              </div>
+            </div>
             <div className={styles.pitchContainer}>
               <img src={pitch} className={styles.pitchImage} />
               {groupAndSortPlayers(
@@ -504,7 +509,11 @@ const App = () => {
               {teamOfTheWeek.players
                 .filter((p) => p.isSubstitute)
                 .map((player) => (
-                  <div key={player.player._id} className={styles.subCard}>
+                  <div
+                    key={player.player._id}
+                    className={styles.subCard}
+                    onClick={() => setModalOpenForPlayer(player)}
+                  >
                     <img
                       src={getTeamLogo(player.player.teamName)}
                       className={styles.teamLogo}

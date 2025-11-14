@@ -278,7 +278,14 @@ const Transfers = () => {
       {userTeam ? (
         <div className={styles.accountList}>
           <h1>My Team</h1>
-          <h2>Your budget: {parseFloat((userTeam.budget / 100).toFixed(2))}</h2>
+          <div className={styles.pointsBar}>
+            <div className={styles.pointsBox}>
+              <span className={styles.pointsLabel}>Budget</span>
+              <span className={styles.pointsValue}>
+                {parseFloat((userTeam.budget / 100).toFixed(2)) || "0"}
+              </span>
+            </div>
+          </div>
           <button
             className={styles.saveTeam}
             onClick={() => saveTeam(userTeam, navigate)}

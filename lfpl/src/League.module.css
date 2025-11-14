@@ -27,8 +27,9 @@
   background-color: #00ff85;
   color: #000;
   border: none;
-  padding: 6px 12px;
-  margin-bottom: 20px;
+  border-bottom: 2px solid currentColor;
+  padding: 8px 12px;
+  margin-bottom: 25px;
   border-radius: 12px;
   font-weight: bold;
   cursor: pointer;

@@ -313,12 +313,20 @@ const Team = () => {
       {userTeam ? (
         <div className={styles.accountList}>
           <h1>{userTeam.owner.username}'s team</h1>
-          <h2>
-            GW points: {userPoints} Total points: {totalPoints}
-          </h2>
+          <div className={styles.pointsBar}>
+            <div className={styles.pointsBox}>
+              <span className={styles.pointsLabel}>GW Points</span>
+              <span className={styles.pointsValue}>{userPoints || "0"}</span>
+            </div>
+            <div className={styles.pointsBox}>
+              <span className={styles.pointsLabel}>Total</span>
+              <span className={styles.pointsValue}>{totalPoints || "0"}</span>
+            </div>
+          </div>
           <button
             className={styles.saveTeam}
             onClick={() => saveTeam(userTeam, navigate)}
+            style={{ visibility: viewingOther ? "hidden" : "visible" }}
           >
             Save team
           </button>
@@ -402,9 +410,16 @@ const Team = () => {
       ) : (
         <div className={styles.accountList}>
           <h1>My Team</h1>
-          <h2>
-            GW points: {userPoints} Total points: {totalPoints}
-          </h2>
+          <div className={styles.pointsBar}>
+            <div className={styles.pointsBox}>
+              <span className={styles.pointsLabel}>GW</span>
+              <span className={styles.pointsValue}>{userPoints || "0"}</span>
+            </div>
+            <div className={styles.pointsBox}>
+              <span className={styles.pointsLabel}>Total</span>
+              <span className={styles.pointsValue}>{totalPoints || "0"}</span>
+            </div>
+          </div>
           <button className={styles.saveTeam}>Save team</button>
           <h2>Starters</h2>
           <div className={styles.pitchContainer}>

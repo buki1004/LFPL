@@ -69,8 +69,6 @@ body.dark-mode [class*="fixtureTeam"] {
   color: #c7d5e0 !important;
 }
 
-body.dark-mode [class*="subCard"],
-body.dark-mode [class*="subCard"],
 body.dark-mode [class*="fixtureScore"] {
   transition: none !important;
   animation: none !important;
@@ -78,8 +76,6 @@ body.dark-mode [class*="fixtureScore"] {
 
 body.dark-mode [class*="playerCard"]:hover,
 body.dark-mode [class*="dropdownItem"]:hover,
-body.dark-mode [class*="subCard"]:hover,
-body.dark-mode [class*="subCard"]:hover [class*="playerName"],
 body.dark-mode [class*="signupAnchor"]:hover {
   background-color: #34455c !important;
   transition: none !important;
@@ -114,6 +110,8 @@ body.dark-mode [class*="signupInput"] {
 body.dark-mode [class*="saveTeam"],
 body.dark-mode [class*="modalButton"],
 body.dark-mode [class*="addButton"],
+body.dark-mode [class*="leagueBtn"],
+body.dark-mode [class*="signupButton"],
 body.dark-mode .forwardBackButton,
 body.dark-mode .gameweekHeader {
   background-color: #00cc6a !important;
@@ -123,9 +121,17 @@ body.dark-mode .gameweekHeader {
 body.dark-mode [class*="saveTeam"]:hover,
 body.dark-mode [class*="modalButton"]:hover,
 body.dark-mode [class*="addButton"]:hover,
+body.dark-mode [class*="leagueBtn"]:hover,
+body.dark-mode [class*="signupButton"]:hover,
 body.dark-mode .forwardBackButton:hover,
 body.dark-mode .gameweekHeader:hover {
   background-color: #00b45d !important;
+}
+
+body.dark-mode [class*="saveTeam"],
+body.dark-mode [class*="leagueBtn"],
+body.dark-mode [class*="signupButton"] {
+  border-bottom: 2px solid #c7d5e0;
 }
 
 body.dark-mode [class*="standingsBox"],
@@ -137,6 +143,11 @@ body.dark-mode [class*="sidePanel"] {
 
 body.dark-mode [class*="playerMarker"]:hover {
   background-color: rgb(27, 40, 56, 1);
+}
+
+body.dark-mode [class*="subCard"]:hover {
+  background-color: rgb(20, 30, 43) !important;
+  border-bottom: 2px solid #c7d5e0 !important;
 }
 
 body.dark-mode [class*="signupAnchor"] {

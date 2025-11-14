@@ -81,6 +81,7 @@ h2 {
   position: absolute;
   transform: translate(-50%, -50%);
   background: none;
+  border-bottom: 2px solid transparent;
   padding: 0;
   border-radius: 10px;
   padding: 4px 6px;
@@ -123,8 +124,9 @@ h2 {
   background-color: #00ff85;
   color: #000;
   border: none;
+  border-bottom: 2px solid currentColor;
   padding: 8px 12px;
-  margin-bottom: 20px;
+  margin-bottom: 25px;
   border-radius: 12px;
   font-weight: bold;
   cursor: pointer;
@@ -144,6 +146,7 @@ h2 {
   background-color: #00ff85;
   color: #000;
   border: none;
+  border-bottom: 2px solid currentColor;
   padding: 8px 12px;
   border-radius: 12px;
   margin-bottom: 15px;
@@ -171,15 +174,24 @@ h2 {
 }
 
 .subCard {
-  cursor: pointer;
+  background: none;
+  padding: 0;
   border-radius: 10px;
-  padding: 8px;
+  border-bottom: 2px solid transparent;
+  padding: 4px 6px;
+  cursor: pointer;
+  font-size: 0.8rem;
   text-align: center;
-  width: 80px;
-  transition: background-color 0.2s ease-in-out;
+  font-weight: bold;
+  transition: background-color 0.2s ease-in-out, border-bottom 0.2s ease-in-out;
 }
 .subCard:hover {
-  background-color: rgba(240, 248, 255, 0.76);
+  background-color: rgb(204, 230, 253);
+  border-bottom: 2px solid currentColor;
+}
+
+.subCard:active {
+  scale: 0.98;
 }
 
 .subPlayerName {
