@@ -75,6 +75,10 @@ console.log("Server started!!!!");
 app.get("/api/players", async (req, res) => {
   const { name, position } = req.query;
 
+  const page = parseInt(req.query.page) || 1;
+  const limit = parseInt(req.query.limit) || 20;
+  const skip = (page - 1) * 20;
+
   try {
     const filter = {};
     if (name) {
@@ -82,12 +86,23 @@ app.get("/api/players", async (req, res) => {
       filter.$or = [{ name: regex }, { teamName: regex }];
     }
 
-    if (position && position !== "All positions") {
+    if (position && position !== "All Positions") {
       filter.position = position;
     }
-    const players = await Player.find(filter).sort({ price: -1 });
 
-    res.json(players);
+    const totalPlayers = await Player.countDocuments(filter);
+
+    const players = await Player.find(filter)
+      .sort({ price: -1 })
+      .skip(skip)
+      .limit(limit);
+
+    res.json({
+      players,
+      totalPlayers,
+      currentPage: page,
+      totalPages: Math.ceil(totalPlayers / limit),
+    });
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: "Server error fetching players " });

@@ -206,6 +206,7 @@ h2 {
 .playerList {
   text-align: center;
   height: 100%;
+  min-height: 1500px;
   width: 50%;
   float: left;
   padding: 20px;
@@ -216,6 +217,7 @@ h2 {
   border-radius: 12px;
   border: 1px solid #ccc;
   background: #f9f9f9;
+  overflow-y: auto;
 }
 
 .playerList h1 {
@@ -418,6 +420,44 @@ h2 {
 .statValue {
   font-weight: bold;
   color: #000;
+}
+
+.pagination {
+  margin-top: 15px;
+  margin-bottom: 20px;
+}
+
+.forwardBackButton {
+  background-color: #00ff85;
+  color: #000;
+  border: none;
+  padding: 10px 12px;
+  border-radius: 50%;
+  margin-left: 10px;
+  margin-right: 10px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.2s, scale 0.15s;
+}
+
+.forwardBackButton:hover {
+  background-color: #00e07b;
+}
+
+.forwardBackButton:active {
+  scale: 0.97;
+}
+
+.forwardBackButton:focus {
+  outline: none;
+}
+
+.forwardBackButton.left {
+  left: 0;
+}
+
+.forwardBackButton.right {
+  right: 0;
 }
 
 @keyframes fadeIn {

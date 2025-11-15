@@ -16,6 +16,8 @@ const Transfers = () => {
   const [query, setQuery] = useState("");
   const [userTeam, setUserTeam] = useState(null);
   const [modalOpenForPlayer, setModalOpenForPlayer] = useState(null);
+  const [page, setPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
   const [selectedPosition, setSelectedPosition] = useState("All Positions");
   const positions = [
     "All Positions",
@@ -241,18 +243,26 @@ const Transfers = () => {
     }
   };
 
+  const handlePositionChange = (e) => {
+    setSelectedPosition(e.target.value);
+    setPage(1);
+  };
+
   useEffect(() => {
     const fetchPlayers = async () => {
       try {
-        const response = await fetch(`/api/players?name=${query}`);
+        const response = await fetch(
+          `/api/players?name=${query}&position=${selectedPosition}&page=${page}&limit=20`
+        );
         const data = await response.json();
-        setBackendData(data);
+        setBackendData(data.players);
+        setTotalPages(data.totalPages);
       } catch (error) {
         console.error("Fetch error:", error);
       }
     };
     fetchPlayers();
-  }, [query]);
+  }, [query, selectedPosition, page]);
 
   useEffect(() => {
     const fetchTeam = async () => {
@@ -418,7 +428,7 @@ const Transfers = () => {
                     key={pos}
                     className={styles.dropdownItem}
                     onClick={() => {
-                      setSelectedPosition(pos);
+                      handlePositionChange({ target: { value: pos } });
                       setIsDropDownOpen(false);
                     }}
                   >
@@ -428,52 +438,102 @@ const Transfers = () => {
               </div>
             )}
           </div>
-          <div className={styles.playerCardList}>
-            {backendData
-              .filter((player) => {
-                const position = player.position || "Unknown";
-                return (
-                  selectedPosition === "All Positions" ||
-                  position === selectedPosition
-                );
-              })
-              .map((player) => {
-                const position = player.position || "Unknown";
-                const isInTeam = userTeam?.players?.some(
-                  (p) => p.player?.id === player.id
-                );
+          <div className={styles.pagination}>
+            <button
+              type="button"
+              disabled={page === 1}
+              onClick={(e) => {
+                e.preventDefault();
+                setPage((p) => p - 1);
+              }}
+              className={`${styles.forwardBackButton} ${styles.left}`}
+            >
+              &lt;
+            </button>
 
-                return (
-                  <div
-                    key={player._id}
-                    className={`${styles.playerCard} ${
-                      isInTeam ? styles.disabledCard : ""
-                    }`}
-                    onClick={() => setModalOpenForPlayer(player)}
-                  >
-                    <div className={styles.playerInfo}>
-                      <img
-                        src={getTeamLogo(player.teamName)}
-                        className={styles.clubLogo}
-                      />
-                      <strong>{player.name}</strong>
-                      <div className={styles.playerMeta}>
-                        {position} • {player.teamName} • £
-                        {(player.price / 100).toFixed(1)} • {player.totalPoints}
-                      </div>
+            <span>
+              Page {page} / {totalPages}
+            </span>
+
+            <button
+              type="button"
+              disabled={page === totalPages}
+              onClick={(e) => {
+                e.preventDefault();
+                setPage((p) => p + 1);
+              }}
+              className={`${styles.forwardBackButton} ${styles.right}`}
+            >
+              &gt;
+            </button>
+          </div>
+          <div className={styles.playerCardList}>
+            {backendData.map((player) => {
+              const position = player.position || "Unknown";
+              const isInTeam = userTeam?.players?.some(
+                (p) => p.player?.id === player.id
+              );
+
+              return (
+                <div
+                  key={player._id}
+                  className={`${styles.playerCard} ${
+                    isInTeam ? styles.disabledCard : ""
+                  }`}
+                  onClick={() => setModalOpenForPlayer(player)}
+                >
+                  <div className={styles.playerInfo}>
+                    <img
+                      src={getTeamLogo(player.teamName)}
+                      className={styles.clubLogo}
+                    />
+                    <strong>{player.name}</strong>
+                    <div className={styles.playerMeta}>
+                      {position} • {player.teamName} • £
+                      {(player.price / 100).toFixed(1)} • {player.totalPoints}
                     </div>
-                    <button
-                      className={styles.addButton}
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        addToTeam(player, setUserTeam);
-                      }}
-                    >
-                      +
-                    </button>
                   </div>
-                );
-              })}
+                  <button
+                    className={styles.addButton}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      addToTeam(player, setUserTeam);
+                    }}
+                  >
+                    +
+                  </button>
+                </div>
+              );
+            })}
+          </div>
+          <div className={styles.pagination}>
+            <button
+              type="button"
+              disabled={page === 1}
+              onClick={(e) => {
+                e.preventDefault();
+                setPage((p) => p - 1);
+              }}
+              className={`${styles.forwardBackButton} ${styles.left}`}
+            >
+              &lt;
+            </button>
+
+            <span>
+              Page {page} / {totalPages}
+            </span>
+
+            <button
+              type="button"
+              disabled={page === totalPages}
+              onClick={(e) => {
+                e.preventDefault();
+                setPage((p) => p + 1);
+              }}
+              className={`${styles.forwardBackButton} ${styles.right}`}
+            >
+              &gt;
+            </button>
           </div>
         </div>
       </div>
@@ -517,18 +577,22 @@ const Transfers = () => {
                 modalOpenForPlayer.player || modalOpenForPlayer
               )}
             </div>
-            {modalOpenForPlayer && (
-              <button
-                onClick={() => {
-                  removeFromTeam(modalOpenForPlayer, setUserTeam);
-
-                  setModalOpenForPlayer(null);
-                }}
-                className={styles.modalButton}
-              >
-                Remove
-              </button>
-            )}
+            {modalOpenForPlayer &&
+              userTeam?.players?.some(
+                (p) =>
+                  p.player?._id ===
+                  (modalOpenForPlayer.player?._id || modalOpenForPlayer._id)
+              ) && (
+                <button
+                  onClick={() => {
+                    removeFromTeam(modalOpenForPlayer, setUserTeam);
+                    setModalOpenForPlayer(null);
+                  }}
+                  className={styles.modalButton}
+                >
+                  Remove
+                </button>
+              )}
             <button
               className={styles.closeBtn}
               onClick={() => setModalOpenForPlayer(null)}
