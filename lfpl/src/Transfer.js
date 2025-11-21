@@ -26,7 +26,13 @@ const Transfers = () => {
     "Midfielder",
     "Attacker",
   ];
-  const [isDropDownOpen, setIsDropDownOpen] = useState(false);
+  const [selectedPrice, setSelectedPrice] = useState(10);
+  const prices = [10, 9.5, 9, 8.5, 8, 7.5, 7, 6.5, 6, 5.5, 5, 4.5, 4];
+  const [selectedSort, setSelectedSort] = useState("Price");
+  const sortOptions = ["Price", "Points"];
+  const [isSortOpen, setIsSortOpen] = useState(false);
+  const [isPositionDropDownOpen, setIsPositionDropDownOpen] = useState(false);
+  const [isPriceDropDownOpen, setIsPriceDropDownOpen] = useState(false);
   const navigate = useNavigate();
 
   const logos = {
@@ -248,21 +254,49 @@ const Transfers = () => {
     setPage(1);
   };
 
+  const handlePriceChange = (e) => {
+    setSelectedPrice(e.target.value);
+    setPage(1);
+  };
+
+  const handleSortChange = (e) => {
+    setSelectedSort(e.target.value);
+    setPage(1);
+  };
+
+  const fetchPlayers = async () => {
+    try {
+      const params = new URLSearchParams({
+        name: query,
+        position: selectedPosition,
+        price: selectedPrice,
+        sort: selectedSort,
+        page: page,
+        limit: 20,
+      });
+
+      const response = await fetch(`/api/players?${params}`);
+      const data = await response.json();
+
+      setBackendData(data.players);
+      setTotalPages(data.totalPages);
+    } catch (error) {
+      console.error("Fetch error:", error);
+    }
+  };
+
   useEffect(() => {
-    const fetchPlayers = async () => {
-      try {
-        const response = await fetch(
-          `/api/players?name=${query}&position=${selectedPosition}&page=${page}&limit=20`
-        );
-        const data = await response.json();
-        setBackendData(data.players);
-        setTotalPages(data.totalPages);
-      } catch (error) {
-        console.error("Fetch error:", error);
-      }
-    };
+    const timeout = setTimeout(() => {
+      setPage(1);
+      fetchPlayers();
+    }, 300);
+
+    return () => clearTimeout(timeout);
+  }, [query]);
+
+  useEffect(() => {
     fetchPlayers();
-  }, [query, selectedPosition, page]);
+  }, [selectedPosition, selectedPrice, selectedSort, page]);
 
   useEffect(() => {
     const fetchTeam = async () => {
@@ -417,11 +451,11 @@ const Transfers = () => {
           <div className={styles.dropdown}>
             <div
               className={styles.dropdownHeader}
-              onClick={() => setIsDropDownOpen(!isDropDownOpen)}
+              onClick={() => setIsPositionDropDownOpen(!isPositionDropDownOpen)}
             >
               {selectedPosition} ▾
             </div>
-            {isDropDownOpen && (
+            {isPositionDropDownOpen && (
               <div className={styles.dropdownList}>
                 {positions.map((pos) => (
                   <div
@@ -429,10 +463,59 @@ const Transfers = () => {
                     className={styles.dropdownItem}
                     onClick={() => {
                       handlePositionChange({ target: { value: pos } });
-                      setIsDropDownOpen(false);
+                      setIsPositionDropDownOpen(false);
                     }}
                   >
                     {pos}
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+          <div className={styles.dropdown}>
+            <div
+              className={styles.dropdownHeader}
+              onClick={() => setIsPriceDropDownOpen(!isPriceDropDownOpen)}
+            >
+              {selectedPrice} ▾
+            </div>
+            {isPriceDropDownOpen && (
+              <div className={styles.dropdownList}>
+                {prices.map((price) => (
+                  <div
+                    key={price}
+                    className={styles.dropdownItem}
+                    onClick={() => {
+                      handlePriceChange({ target: { value: price } });
+                      setIsPriceDropDownOpen(false);
+                    }}
+                  >
+                    &lt;={price}
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+          <p>Sort by:</p>
+          <div className={styles.dropdown}>
+            <div
+              className={styles.dropdownHeader}
+              onClick={() => setIsSortOpen(!isSortOpen)}
+            >
+              {selectedSort} ▾
+            </div>
+            {isSortOpen && (
+              <div className={styles.dropdownList}>
+                {sortOptions.map((sort) => (
+                  <div
+                    key={sort}
+                    className={styles.dropdownItem}
+                    onClick={() => {
+                      handleSortChange({ target: { value: sort } });
+                      setIsSortOpen(false);
+                    }}
+                  >
+                    {sort}
                   </div>
                 ))}
               </div>
@@ -551,6 +634,15 @@ const Transfers = () => {
               {modalOpenForPlayer.player?.name || modalOpenForPlayer.name}
             </h3>
             <div className={styles.pointsBar}>
+              <div className={styles.pointsBox}>
+                <span className={styles.pointsLabel}>Price</span>
+                <span className={styles.pointsValue}>
+                  {(
+                    modalOpenForPlayer.player?.price / 100 ||
+                    modalOpenForPlayer.price / 100
+                  ).toFixed(1)}
+                </span>
+              </div>
               <div className={styles.pointsBox}>
                 <span className={styles.pointsLabel}>GW</span>
                 <span className={styles.pointsValue}>

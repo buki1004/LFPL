@@ -73,11 +73,12 @@ function setPlayerPrices1(players) {
 
 console.log("Server started!!!!");
 app.get("/api/players", async (req, res) => {
-  const { name, position } = req.query;
+  const { name, position, price, sort } = req.query;
 
   const page = parseInt(req.query.page) || 1;
   const limit = parseInt(req.query.limit) || 20;
   const skip = (page - 1) * 20;
+  const convertedPrice = price ? price * 100 : null;
 
   try {
     const filter = {};
@@ -90,10 +91,21 @@ app.get("/api/players", async (req, res) => {
       filter.position = position;
     }
 
+    if (convertedPrice !== null) {
+      filter.price = { $lte: convertedPrice };
+    }
+
+    const sortOptions = {};
+    if (sort === "Points") {
+      sortOptions.totalPoints = -1;
+    } else {
+      sortOptions.price = -1;
+    }
+
     const totalPlayers = await Player.countDocuments(filter);
 
     const players = await Player.find(filter)
-      .sort({ price: -1 })
+      .sort(sortOptions)
       .skip(skip)
       .limit(limit);
 
