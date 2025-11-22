@@ -229,11 +229,24 @@ h2 {
   margin: 0 auto;
 }
 
+.filterContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.filterRow {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+}
+
 .dropdown {
   position: relative;
   display: inline-block;
   margin-bottom: 10px;
   font-size: 14px;
+  margin-right: 0;
 }
 
 .dropdownHeader {

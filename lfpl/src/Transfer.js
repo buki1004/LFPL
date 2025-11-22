@@ -448,53 +448,61 @@ const Transfers = () => {
             className={styles.searchInput}
             onChange={(e) => setQuery(e.target.value)}
           />
-          <div className={styles.dropdown}>
-            <div
-              className={styles.dropdownHeader}
-              onClick={() => setIsPositionDropDownOpen(!isPositionDropDownOpen)}
-            >
-              {selectedPosition} ▾
-            </div>
-            {isPositionDropDownOpen && (
-              <div className={styles.dropdownList}>
-                {positions.map((pos) => (
-                  <div
-                    key={pos}
-                    className={styles.dropdownItem}
-                    onClick={() => {
-                      handlePositionChange({ target: { value: pos } });
-                      setIsPositionDropDownOpen(false);
-                    }}
-                  >
-                    {pos}
+          <div className={styles.filterContainer}>
+            <p>Filter:</p>
+            <div className={styles.filterRow}>
+              <div className={styles.dropdown}>
+                <div
+                  className={styles.dropdownHeader}
+                  onClick={() =>
+                    setIsPositionDropDownOpen(!isPositionDropDownOpen)
+                  }
+                >
+                  {selectedPosition} ▾
+                </div>
+                {isPositionDropDownOpen && (
+                  <div className={styles.dropdownList}>
+                    {positions.map((pos) => (
+                      <div
+                        key={pos}
+                        className={styles.dropdownItem}
+                        onClick={() => {
+                          handlePositionChange({ target: { value: pos } });
+                          setIsPositionDropDownOpen(false);
+                        }}
+                      >
+                        {pos}
+                      </div>
+                    ))}
                   </div>
-                ))}
+                )}
               </div>
-            )}
-          </div>
-          <div className={styles.dropdown}>
-            <div
-              className={styles.dropdownHeader}
-              onClick={() => setIsPriceDropDownOpen(!isPriceDropDownOpen)}
-            >
-              {selectedPrice} ▾
-            </div>
-            {isPriceDropDownOpen && (
-              <div className={styles.dropdownList}>
-                {prices.map((price) => (
-                  <div
-                    key={price}
-                    className={styles.dropdownItem}
-                    onClick={() => {
-                      handlePriceChange({ target: { value: price } });
-                      setIsPriceDropDownOpen(false);
-                    }}
-                  >
-                    &lt;={price}
+
+              <div className={styles.dropdown}>
+                <div
+                  className={styles.dropdownHeader}
+                  onClick={() => setIsPriceDropDownOpen(!isPriceDropDownOpen)}
+                >
+                  {selectedPrice} ▾
+                </div>
+                {isPriceDropDownOpen && (
+                  <div className={styles.dropdownList}>
+                    {prices.map((price) => (
+                      <div
+                        key={price}
+                        className={styles.dropdownItem}
+                        onClick={() => {
+                          handlePriceChange({ target: { value: price } });
+                          setIsPriceDropDownOpen(false);
+                        }}
+                      >
+                        &lt;={price}
+                      </div>
+                    ))}
                   </div>
-                ))}
+                )}
               </div>
-            )}
+            </div>
           </div>
           <p>Sort by:</p>
           <div className={styles.dropdown}>
