@@ -7703,13 +7703,13 @@
     {
       "fixture": {
         "id": 1379086,
-        "referee": null,
+        "referee": "Tony Harrington, England",
         "timezone": "UTC",
-        "date": "2025-11-22T15:00:00+00:00",
-        "timestamp": 1763823600,
+        "date": "2025-11-24T20:00:00+00:00",
+        "timestamp": 1764014400,
         "periods": {
-          "first": null,
-          "second": null
+          "first": 1764014400,
+          "second": 1764018000
         },
         "venue": {
           "id": 556,
@@ -7717,10 +7717,10 @@
           "city": "Manchester"
         },
         "status": {
-          "long": "Not Started",
-          "short": "NS",
-          "elapsed": null,
-          "extra": null
+          "long": "Match Finished-processed",
+          "short": "FT-processed",
+          "elapsed": 90,
+          "extra": 4
         }
       },
       "league": {
@@ -7738,27 +7738,27 @@
           "id": 33,
           "name": "Manchester United",
           "logo": "https://media.api-sports.io/football/teams/33.png",
-          "winner": null
+          "winner": false
         },
         "away": {
           "id": 45,
           "name": "Everton",
           "logo": "https://media.api-sports.io/football/teams/45.png",
-          "winner": null
+          "winner": true
         }
       },
       "goals": {
-        "home": null,
-        "away": null
+        "home": 0,
+        "away": 1
       },
       "score": {
         "halftime": {
-          "home": null,
-          "away": null
+          "home": 0,
+          "away": 1
         },
         "fulltime": {
-          "home": null,
-          "away": null
+          "home": 0,
+          "away": 1
         },
         "extratime": {
           "home": null,
@@ -7773,24 +7773,24 @@
     {
       "fixture": {
         "id": 1379087,
-        "referee": null,
+        "referee": "Samuel Barrott, England",
         "timezone": "UTC",
-        "date": "2025-11-22T15:00:00+00:00",
-        "timestamp": 1763823600,
+        "date": "2025-11-22T17:30:00+00:00",
+        "timestamp": 1763832600,
         "periods": {
-          "first": null,
-          "second": null
+          "first": 1763832600,
+          "second": 1763836200
         },
         "venue": {
           "id": 562,
           "name": "St. James' Park",
-          "city": "Newcastle upon Tyne"
+          "city": "Newcastle"
         },
         "status": {
-          "long": "Not Started",
-          "short": "NS",
-          "elapsed": null,
-          "extra": null
+          "long": "Match Finished-processed",
+          "short": "FT-processed",
+          "elapsed": 90,
+          "extra": 9
         }
       },
       "league": {
@@ -7808,27 +7808,27 @@
           "id": 34,
           "name": "Newcastle",
           "logo": "https://media.api-sports.io/football/teams/34.png",
-          "winner": null
+          "winner": true
         },
         "away": {
           "id": 50,
           "name": "Manchester City",
           "logo": "https://media.api-sports.io/football/teams/50.png",
-          "winner": null
+          "winner": false
         }
       },
       "goals": {
-        "home": null,
-        "away": null
+        "home": 2,
+        "away": 1
       },
       "score": {
         "halftime": {
-          "home": null,
-          "away": null
+          "home": 0,
+          "away": 0
         },
         "fulltime": {
-          "home": null,
-          "away": null
+          "home": 2,
+          "away": 1
         },
         "extratime": {
           "home": null,
@@ -7843,24 +7843,24 @@
     {
       "fixture": {
         "id": 1379080,
-        "referee": null,
+        "referee": "Thomas Bramall, England",
         "timezone": "UTC",
         "date": "2025-11-22T15:00:00+00:00",
         "timestamp": 1763823600,
         "periods": {
-          "first": null,
-          "second": null
+          "first": 1763823600,
+          "second": 1763827200
         },
         "venue": {
           "id": 504,
           "name": "Vitality Stadium",
-          "city": "Bournemouth, Dorset"
+          "city": "Bournemouth"
         },
         "status": {
-          "long": "Not Started",
-          "short": "NS",
-          "elapsed": null,
-          "extra": null
+          "long": "Match Finished-processed",
+          "short": "FT-processed",
+          "elapsed": 90,
+          "extra": 7
         }
       },
       "league": {
@@ -7888,17 +7888,17 @@
         }
       },
       "goals": {
-        "home": null,
-        "away": null
+        "home": 2,
+        "away": 2
       },
       "score": {
         "halftime": {
-          "home": null,
-          "away": null
+          "home": 0,
+          "away": 2
         },
         "fulltime": {
-          "home": null,
-          "away": null
+          "home": 2,
+          "away": 2
         },
         "extratime": {
           "home": null,
@@ -7913,13 +7913,13 @@
     {
       "fixture": {
         "id": 1379083,
-        "referee": null,
+        "referee": "Darren England, England",
         "timezone": "UTC",
         "date": "2025-11-22T15:00:00+00:00",
         "timestamp": 1763823600,
         "periods": {
-          "first": null,
-          "second": null
+          "first": 1763823600,
+          "second": 1763827200
         },
         "venue": {
           "id": 535,
@@ -7927,10 +7927,10 @@
           "city": "London"
         },
         "status": {
-          "long": "Not Started",
-          "short": "NS",
-          "elapsed": null,
-          "extra": null
+          "long": "Match Finished-processed",
+          "short": "FT-processed",
+          "elapsed": 90,
+          "extra": 7
         }
       },
       "league": {
@@ -7948,27 +7948,27 @@
           "id": 36,
           "name": "Fulham",
           "logo": "https://media.api-sports.io/football/teams/36.png",
-          "winner": null
+          "winner": true
         },
         "away": {
           "id": 746,
           "name": "Sunderland",
           "logo": "https://media.api-sports.io/football/teams/746.png",
-          "winner": null
+          "winner": false
         }
       },
       "goals": {
-        "home": null,
-        "away": null
+        "home": 1,
+        "away": 0
       },
       "score": {
         "halftime": {
-          "home": null,
-          "away": null
+          "home": 0,
+          "away": 0
         },
         "fulltime": {
-          "home": null,
-          "away": null
+          "home": 1,
+          "away": 0
         },
         "extratime": {
           "home": null,
@@ -7983,24 +7983,24 @@
     {
       "fixture": {
         "id": 1379088,
-        "referee": null,
+        "referee": "Anthony Taylor, England",
         "timezone": "UTC",
         "date": "2025-11-22T15:00:00+00:00",
         "timestamp": 1763823600,
         "periods": {
-          "first": null,
-          "second": null
+          "first": 1763823600,
+          "second": 1763827200
         },
         "venue": {
           "id": 600,
           "name": "Molineux Stadium",
-          "city": "Wolverhampton, West Midlands"
+          "city": "Wolverhampton"
         },
         "status": {
-          "long": "Not Started",
-          "short": "NS",
-          "elapsed": null,
-          "extra": null
+          "long": "Match Finished-processed",
+          "short": "FT-processed",
+          "elapsed": 90,
+          "extra": 6
         }
       },
       "league": {
@@ -8018,27 +8018,27 @@
           "id": 39,
           "name": "Wolves",
           "logo": "https://media.api-sports.io/football/teams/39.png",
-          "winner": null
+          "winner": false
         },
         "away": {
           "id": 52,
           "name": "Crystal Palace",
           "logo": "https://media.api-sports.io/football/teams/52.png",
-          "winner": null
+          "winner": true
         }
       },
       "goals": {
-        "home": null,
-        "away": null
+        "home": 0,
+        "away": 2
       },
       "score": {
         "halftime": {
-          "home": null,
-          "away": null
+          "home": 0,
+          "away": 0
         },
         "fulltime": {
-          "home": null,
-          "away": null
+          "home": 0,
+          "away": 2
         },
         "extratime": {
           "home": null,
@@ -8053,13 +8053,13 @@
     {
       "fixture": {
         "id": 1379085,
-        "referee": null,
+        "referee": "Andy Madley, England",
         "timezone": "UTC",
         "date": "2025-11-22T15:00:00+00:00",
         "timestamp": 1763823600,
         "periods": {
-          "first": null,
-          "second": null
+          "first": 1763823600,
+          "second": 1763827200
         },
         "venue": {
           "id": 550,
@@ -8067,10 +8067,10 @@
           "city": "Liverpool"
         },
         "status": {
-          "long": "Not Started",
-          "short": "NS",
-          "elapsed": null,
-          "extra": null
+          "long": "Match Finished-processed",
+          "short": "FT-processed",
+          "elapsed": 90,
+          "extra": 6
         }
       },
       "league": {
@@ -8088,27 +8088,27 @@
           "id": 40,
           "name": "Liverpool",
           "logo": "https://media.api-sports.io/football/teams/40.png",
-          "winner": null
+          "winner": false
         },
         "away": {
           "id": 65,
           "name": "Nottingham Forest",
           "logo": "https://media.api-sports.io/football/teams/65.png",
-          "winner": null
+          "winner": true
         }
       },
       "goals": {
-        "home": null,
-        "away": null
+        "home": 0,
+        "away": 3
       },
       "score": {
         "halftime": {
-          "home": null,
-          "away": null
+          "home": 0,
+          "away": 1
         },
         "fulltime": {
-          "home": null,
-          "away": null
+          "home": 0,
+          "away": 3
         },
         "extratime": {
           "home": null,
@@ -8123,13 +8123,13 @@
     {
       "fixture": {
         "id": 1379079,
-        "referee": null,
+        "referee": "Michael Oliver, England",
         "timezone": "UTC",
-        "date": "2025-11-22T15:00:00+00:00",
-        "timestamp": 1763823600,
+        "date": "2025-11-23T16:30:00+00:00",
+        "timestamp": 1763915400,
         "periods": {
-          "first": null,
-          "second": null
+          "first": 1763915400,
+          "second": 1763919000
         },
         "venue": {
           "id": 494,
@@ -8137,10 +8137,10 @@
           "city": "London"
         },
         "status": {
-          "long": "Not Started",
-          "short": "NS",
-          "elapsed": null,
-          "extra": null
+          "long": "Match Finished-processed",
+          "short": "FT-processed",
+          "elapsed": 90,
+          "extra": 5
         }
       },
       "league": {
@@ -8158,27 +8158,27 @@
           "id": 42,
           "name": "Arsenal",
           "logo": "https://media.api-sports.io/football/teams/42.png",
-          "winner": null
+          "winner": true
         },
         "away": {
           "id": 47,
           "name": "Tottenham",
           "logo": "https://media.api-sports.io/football/teams/47.png",
-          "winner": null
+          "winner": false
         }
       },
       "goals": {
-        "home": null,
-        "away": null
+        "home": 4,
+        "away": 1
       },
       "score": {
         "halftime": {
-          "home": null,
-          "away": null
+          "home": 2,
+          "away": 0
         },
         "fulltime": {
-          "home": null,
-          "away": null
+          "home": 4,
+          "away": 1
         },
         "extratime": {
           "home": null,
@@ -8193,13 +8193,13 @@
     {
       "fixture": {
         "id": 1379082,
-        "referee": null,
+        "referee": "Peter Bankes, England",
         "timezone": "UTC",
-        "date": "2025-11-22T15:00:00+00:00",
-        "timestamp": 1763823600,
+        "date": "2025-11-22T12:30:00+00:00",
+        "timestamp": 1763814600,
         "periods": {
-          "first": null,
-          "second": null
+          "first": 1763814600,
+          "second": 1763818200
         },
         "venue": {
           "id": 512,
@@ -8207,10 +8207,10 @@
           "city": "Burnley"
         },
         "status": {
-          "long": "Not Started",
-          "short": "NS",
-          "elapsed": null,
-          "extra": null
+          "long": "Match Finished-processed",
+          "short": "FT-processed",
+          "elapsed": 90,
+          "extra": 6
         }
       },
       "league": {
@@ -8228,27 +8228,27 @@
           "id": 44,
           "name": "Burnley",
           "logo": "https://media.api-sports.io/football/teams/44.png",
-          "winner": null
+          "winner": false
         },
         "away": {
           "id": 49,
           "name": "Chelsea",
           "logo": "https://media.api-sports.io/football/teams/49.png",
-          "winner": null
+          "winner": true
         }
       },
       "goals": {
-        "home": null,
-        "away": null
+        "home": 0,
+        "away": 2
       },
       "score": {
         "halftime": {
-          "home": null,
-          "away": null
+          "home": 0,
+          "away": 1
         },
         "fulltime": {
-          "home": null,
-          "away": null
+          "home": 0,
+          "away": 2
         },
         "extratime": {
           "home": null,
@@ -8263,24 +8263,24 @@
     {
       "fixture": {
         "id": 1379081,
-        "referee": null,
+        "referee": "John Brooks, England",
         "timezone": "UTC",
         "date": "2025-11-22T15:00:00+00:00",
         "timestamp": 1763823600,
         "periods": {
-          "first": null,
-          "second": null
+          "first": 1763823600,
+          "second": 1763827200
         },
         "venue": {
           "id": 508,
-          "name": "American Express Stadium",
-          "city": "Falmer, East Sussex"
+          "name": "Amex Stadium",
+          "city": "Brighton"
         },
         "status": {
-          "long": "Not Started",
-          "short": "NS",
-          "elapsed": null,
-          "extra": null
+          "long": "Match Finished-processed",
+          "short": "FT-processed",
+          "elapsed": 90,
+          "extra": 8
         }
       },
       "league": {
@@ -8298,27 +8298,27 @@
           "id": 51,
           "name": "Brighton",
           "logo": "https://media.api-sports.io/football/teams/51.png",
-          "winner": null
+          "winner": true
         },
         "away": {
           "id": 55,
           "name": "Brentford",
           "logo": "https://media.api-sports.io/football/teams/55.png",
-          "winner": null
+          "winner": false
         }
       },
       "goals": {
-        "home": null,
-        "away": null
+        "home": 2,
+        "away": 1
       },
       "score": {
         "halftime": {
-          "home": null,
-          "away": null
+          "home": 0,
+          "away": 1
         },
         "fulltime": {
-          "home": null,
-          "away": null
+          "home": 2,
+          "away": 1
         },
         "extratime": {
           "home": null,
@@ -8333,24 +8333,24 @@
     {
       "fixture": {
         "id": 1379084,
-        "referee": null,
+        "referee": "Robert Jones, England",
         "timezone": "UTC",
-        "date": "2025-11-22T15:00:00+00:00",
-        "timestamp": 1763823600,
+        "date": "2025-11-23T14:00:00+00:00",
+        "timestamp": 1763906400,
         "periods": {
-          "first": null,
-          "second": null
+          "first": 1763906400,
+          "second": 1763910000
         },
         "venue": {
           "id": 546,
           "name": "Elland Road",
-          "city": "Leeds, West Yorkshire"
+          "city": "Leeds"
         },
         "status": {
-          "long": "Not Started",
-          "short": "NS",
-          "elapsed": null,
-          "extra": null
+          "long": "Match Finished-processed",
+          "short": "FT-processed",
+          "elapsed": 90,
+          "extra": 7
         }
       },
       "league": {
@@ -8368,27 +8368,27 @@
           "id": 63,
           "name": "Leeds",
           "logo": "https://media.api-sports.io/football/teams/63.png",
-          "winner": null
+          "winner": false
         },
         "away": {
           "id": 66,
           "name": "Aston Villa",
           "logo": "https://media.api-sports.io/football/teams/66.png",
-          "winner": null
+          "winner": true
         }
       },
       "goals": {
-        "home": null,
-        "away": null
+        "home": 1,
+        "away": 2
       },
       "score": {
         "halftime": {
-          "home": null,
-          "away": null
+          "home": 1,
+          "away": 0
         },
         "fulltime": {
-          "home": null,
-          "away": null
+          "home": 1,
+          "away": 2
         },
         "extratime": {
           "home": null,

@@ -24,7 +24,10 @@ function calculatePoints(playerStats, position, fixture, teamName) {
 
   points += (playerStats.goals.assists || 0) * 3;
 
-  if (position === "G" || position === "D") {
+  if (
+    (position === "G" || position === "D") &&
+    playerStats.games.minutes >= 45
+  ) {
     const isHome = teamName === fixture.teams.home.name;
 
     if (isHome && fixture.goals.away === 0) points += 4;
